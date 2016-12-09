@@ -1,0 +1,7 @@
+Total(c) = TransactionsIn(i) + TransfersIn(i) + TransfersOut(i)
+
+Available(c) = Total(c) + TransactionsOut(c)
+
+Available = Total(c1..n) + TransactionOut(c1..n)
+
+Unaccounted = TransfersIn(c1..n) + TransfersOut(c1..n)
