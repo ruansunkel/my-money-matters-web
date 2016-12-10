@@ -107,9 +107,9 @@
         th.innerHTML = "Category";
         tr.appendChild(th);
         
-        th = document.createElement("th");
-        th.innerHTML = "Initial";
-        tr.appendChild(th);
+        // th = document.createElement("th");
+        // th.innerHTML = "Initial";
+        // tr.appendChild(th);
         
         th = document.createElement("th");
         th.innerHTML = "Available";
@@ -162,10 +162,10 @@
         td = document.createElement("td");
         tr.appendChild(td);
         b = document.createElement("b");
-        b.innerHTML = "Available Balance";
+        b.innerHTML = "TOTAL";
         td.appendChild(b);
         td = document.createElement("td");
-        tr.appendChild(td);
+        //tr.appendChild(td);
         
         var initial = log.reduce(function(accumulator, entry){
             return accumulator + ((entry.type === "Transfer" && entry.approved) ? entry.amount : 0);
@@ -188,10 +188,10 @@
         td = document.createElement("td");
         tr.appendChild(td);
         b = document.createElement("b");
-        b.innerHTML = "Unaccounted Balance";
+        b.innerHTML = "Unaccounted";
         td.appendChild(b);
         td = document.createElement("td");
-        tr.appendChild(td);
+        //tr.appendChild(td);
         
         var transfers = log.reduce(function(accumulator, entry){
             return accumulator + ((entry.type === "Transfer") ? entry.amount : 0);
