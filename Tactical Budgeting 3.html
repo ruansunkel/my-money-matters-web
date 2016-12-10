@@ -107,10 +107,6 @@
         th.innerHTML = "Category";
         tr.appendChild(th);
         
-        // th = document.createElement("th");
-        // th.innerHTML = "Initial";
-        // tr.appendChild(th);
-        
         th = document.createElement("th");
         th.innerHTML = "Available";
         tr.appendChild(th);
@@ -131,10 +127,6 @@
                 + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount > 0) ? entry.amount : 0);
             }, 0);
             initial = Math.round(initial * 100) / 100;
-
-            //td = document.createElement("td");
-            //tr.appendChild(td);
-            //td.innerHTML = "R" + initial;
             
             var spent = log.reduce(function(accumulator, entry){
                 return accumulator + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount < 0) ? entry.amount : 0);
