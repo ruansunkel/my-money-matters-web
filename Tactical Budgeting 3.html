@@ -134,7 +134,7 @@
             
             td = document.createElement("td");
             tr.appendChild(td);
-            td.innerHTML = "R" + Math.round((initial + spent) * 100) / 100;
+            td.innerHTML = (Math.round((initial + spent) * 100) / 100).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
             
             if (initial === initial + spent) {
                 tr.className = "success";
@@ -155,8 +155,6 @@
         b = document.createElement("b");
         b.innerHTML = "TOTAL";
         td.appendChild(b);
-        td = document.createElement("td");
-        //tr.appendChild(td);
         
         var initial = log.reduce(function(accumulator, entry){
             return accumulator + ((entry.type === "Transfer" && entry.approved) ? entry.amount : 0);
@@ -169,7 +167,7 @@
         spent = Math.round(spent * 100) / 100;
         
         td = document.createElement("td");
-        td.innerHTML = "<b>R" + (Math.round((initial + spent) * 100) / 100) + "</br>";
+        td.innerHTML = "<b>" + (Math.round((initial + spent) * 100) / 100).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + "</br>";
         tr.appendChild(td);
         
         tbody.appendChild(tr);
@@ -179,10 +177,8 @@
         td = document.createElement("td");
         tr.appendChild(td);
         b = document.createElement("b");
-        b.innerHTML = "Unaccounted";
+        b.innerHTML = "FLOATING";
         td.appendChild(b);
-        td = document.createElement("td");
-        //tr.appendChild(td);
         
         var transfers = log.reduce(function(accumulator, entry){
             return accumulator + ((entry.type === "Transfer") ? entry.amount : 0);
@@ -190,7 +186,7 @@
         transfers = Math.round(initial * 100) / 100;
         
         td = document.createElement("td");
-        td.innerHTML = "<b>R" + Math.abs(transfers) + "</br>";
+        td.innerHTML = "<b>" + Math.abs(transfers).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + "</br>";
         tr.appendChild(td);
         
         tbody.appendChild(tr);
@@ -259,10 +255,10 @@
             tr.appendChild(td);
             tbody.appendChild(tr);
             if (entry.amount > 0) {
-                td.innerHTML = "R" + entry.amount + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
+                td.innerHTML = entry.amount.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
             }
             else{
-                td.innerHTML = "R" + Math.abs(entry.amount) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
+                td.innerHTML = Math.abs(entry.amount).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
             }
                     
             td = document.createElement("td");
@@ -289,7 +285,7 @@
             td = document.createElement("td");
             tr.appendChild(td);
             tbody.appendChild(tr);
-            td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from R" + previous + " to R" + balance
+            td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + previous.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + " to " + balance.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' })
             
             if (!entry.approved) {
                 tr.className = "info";
