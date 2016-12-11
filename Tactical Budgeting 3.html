@@ -287,20 +287,16 @@
             tbody.appendChild(tr);
             td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + previous.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + " to " + balance.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' })
             
-            if (!entry.approved) {
-                tr.className = "info";
-            }
-            
-            if (balance === 0) {
-                tr.className = "warning";
-            }
-            
             if (balance < 0) {
                 tr.className = "danger";
             }
             
             if (entry.amount > 0 && entry.type === "Transaction") {
                 tr.className = "success";
+            }
+
+            if (!entry.approved) {
+                tr.className = "info";
             }
         });
     
