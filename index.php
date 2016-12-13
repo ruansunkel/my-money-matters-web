@@ -97,14 +97,19 @@
             field.className = "btn btn-default";
             field.innerHTML = "Login";
             field.onclick = function() {
-                field.style.display = "hidden";
+                field.setAttribute("disabled", true);
+                document.getElementById("username").setAttribute("disabled", true);
+                document.getElementById("password").setAttribute("disabled", true);
+                panelTitle.innerHTML = "Please wait..."
 
                 firebase.auth().signInWithEmailAndPassword(document.getElementById("username").value, document.getElementById("password").value).then(function() {
                     user = document.getElementById("username").value.split("@").join("_at_").split(".").join("_dot_");
                     retrieveAndRenderLog(user);
                 }, function(error){
-                    alert(error);
-                    field.style.display = "block";
+                    field.removeAttribute("disabled");
+                    document.getElementById("username").removeAttribute("disabled");
+                    document.getElementById("password").removeAttribute("disabled");
+                    panelTitle.innerHTML = "Login";
                 });
             }
         }
