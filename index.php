@@ -8,6 +8,15 @@
         <!--Include Bootstrap CSS-->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
 
+        <!--Include jQuery Theme-->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        
+        <!--Include jQuery JS-->
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+        <!--Include jQueryUI JS-->
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" integrity="sha256-DI6NdAhhFRnO2k51mumYeDShet3I8AKCQf/tf7ARNhI=" crossorigin="anonymous"></script>
+
         <!--Include Firebase JS-->
         <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
         
@@ -22,11 +31,13 @@
             });
         </script>
     </head>
-    
+
     <body>
     </body>
     
     <script type="text/javascript">
+        user = "";
+
         function showLogin() {
             document.body.innerHTML = "";
 
@@ -58,7 +69,7 @@
             formGroup.appendChild(field);
 
             field.className = "form-control";
-            field.placeholder = "Username";
+            field.placeholder = "Email";
             field.id = "username";
             field.type = "text";
 
@@ -86,10 +97,14 @@
             field.className = "btn btn-default";
             field.innerHTML = "Login";
             field.onclick = function() {
+                field.style.display = "hidden";
+
                 firebase.auth().signInWithEmailAndPassword(document.getElementById("username").value, document.getElementById("password").value).then(function() {
-                    retrieveAndRenderLog(document.getElementById("username").value.split("@").join("_at_").split(".").join("_dot_"));
+                    user = document.getElementById("username").value.split("@").join("_at_").split(".").join("_dot_");
+                    retrieveAndRenderLog(user);
                 }, function(error){
                     alert(error);
+                    field.style.display = "block";
                 });
             }
         }
@@ -270,6 +285,8 @@
             field.name = "date";
             field.type = "text";
 
+            $("#date").datepicker({dateFormat: "yy-mm-dd"});
+
             // Type
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
@@ -348,10 +365,10 @@
             inputGroupAddon = document.createElement("div");
             inputGroupAddon.className = "input-group-addon";
             inputGroupAddon.innerHTML = "R";
-            inputGroup.appendChild(inputGroupAddon);
+            //inputGroup.appendChild(inputGroupAddon);
 
             field = document.createElement("input");
-            inputGroup.appendChild(field);
+            formGroup.appendChild(field);
 
             field.className = "form-control";
             field.placeholder = "Amount";
@@ -409,7 +426,19 @@
                     approved: document.getElementById("approved").checked
                 };
 
-                log.splice(log.length - parseInt(document.getElementById("index").value), 0, entry);
+                index = 0;
+                if (document.getElementById("index").value !== "") {
+                    index = log.length - parseInt(document.getElementById("index").value);
+
+                    if (index > log.length - 1) {
+                        index = 0;
+                    }
+                    if (index < 0) {
+                        index = 0;
+                    }
+                }
+
+                log.splice(index, 0, entry);
                 saveLog(log);
                 renderLog(log);
             }
@@ -574,7 +603,7 @@
                 list.push("{\"date\":\"" + entry.date + "\", \"type\":\"" + entry.type + "\", \"category\":\"" + entry.category + "\", \"description\":\"" + entry.description + "\", \"amount\":" + entry.amount + ", \"approved\":" + entry.approved + "}");
             });
 
-            firebase.database().ref("Ruan").set({
+            firebase.database().ref(user).set({
                 list: "[" + list.join() + "]"
             });
         }
@@ -584,5 +613,7 @@
                 renderLog(JSON.parse(snapshot.child("list").val()));
             });
         }
+
+        // retrieveAndRenderLog("rnsnkl@gmail.com".split("@").join("_at_").split(".").join("_dot_"));
     </script>
 </html>
