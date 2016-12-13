@@ -7,7 +7,6 @@
 
         <script src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
         <script>
-            // Initialize Firebase
             var config = {
                 apiKey: "AIzaSyDduHfieTkSq1KFVKxpmnok3Dg9jtkFtgA",
                 authDomain: "ruans-app-aa38f.firebaseapp.com",
@@ -17,31 +16,151 @@
             };
             firebase.initializeApp(config);
 
-            firebase.auth().signInWithEmailAndPassword("rnsnkl@gmail.com", "P03p7129@firebase").catch(function(error) {});
-
-            // Import Transactions
-            // var log = <?php //echo file_get_contents("ruan.json"); ?>;
-
-            // list = [];
-            // log.forEach(function(entry){
-            //     list.push("{\"date\":\"" + entry.date + "\", \"type\":\"" + entry.type + "\", \"category\":\"" + entry.category + "\", \"description\":\"" + entry.description + "\", \"amount\":" + entry.amount + ", \"approved\":" + entry.approved + "}");
-            // });
-
-            // firebase.database().ref("Ruan").set({
-            //     list: "[" + list.join() + "]"
-            // });
-
-            
-
+            firebase.auth().signInWithEmailAndPassword("rnsnkl@gmail.com", "P03p7129@firebase").catch(function(error) {
+                alert("Error signing in");
+            });
         </script>
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
     </head>
     <body>
+        <div class="panel panel-default" style="margin: 20px">
+            <div class="panel-heading">
+                <h3 class="panel-title">Add Transaction</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Date">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                                    Transaction
+                                </label>
+                                &nbsp;
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                                    Transfer
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Category">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Description">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">R</div>
+                                <input type="text" class="form-control" id="exampleInputAmount" placeholder="Amount">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"> Approved
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <button class="btn btn-default" type="submit">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
     </body>
     
     <script type="text/javascript">
         function renderLog(log) {
+            document.body.innerHTML = "";
+
+            container = document.createElement("div");
+            document.body.appendChild(container);
+
+            field = document.createElement("input");
+            field.id = "date";
+            field.name = "date";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("input");
+            field.id = "type";
+            field.name = "type";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("input");
+            field.id = "category";
+            field.name = "category";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("input");
+            field.id = "description";
+            field.name = "description";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("input");
+            field.id = "amount";
+            field.name = "amount";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("input");
+            field.id = "approved";
+            field.name = "approved";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("input");
+            field.id = "index";
+            field.name = "index";
+            field.type = "text";
+            container.appendChild(field);
+
+            field = document.createElement("div");
+            field.innerHTML = "Add";
+            container.appendChild(field);
+
+            field.onclick = function() {
+                entry = {
+                    date: document.getElementById("date").value,
+                    type: document.getElementById("type").value,
+                    category: document.getElementById("category").value,
+                    description: document.getElementById("description").value,
+                    amount: parseFloat(document.getElementById("amount").value),
+                    approved: document.getElementById("approved").value === "true"
+                };
+
+                log.splice(log.length-parseInt(document.getElementById("index").value), 0, entry);
+
+                saveLog(log);
+                renderLog(log);
+            }
+
+            // Start with beautiful Form
+
             // Get distinct categories
             categories = {};
             log.forEach(function(entry){
@@ -268,12 +387,62 @@
                 if (!entry.approved) {
                     tr.className = "info";
                 }
+
+                // Approve Entry
+                td = document.createElement("td");
+                td.innerHTML = entry.approved ? "Disable" : "Approve";
+                td.style.cursor = "pointer";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                td.onclick = function() {
+                    entry = log[index];
+                    entry.approved = !entry.approved;
+
+                    log.splice(index, 1, entry);
+
+                    saveLog(log);
+                    renderLog(log);
+                }
+
+                // Remove Entry
+                td = document.createElement("td");
+                td.innerHTML = "Remove";
+                td.style.cursor = "pointer";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                td.onclick = function() {
+                    if (!window.confirm("Are you sure you want to remove this entry?")) {
+                        return;
+                    }
+
+                    log.splice(index, 1);
+                    saveLog(log);
+                    renderLog(log);
+                }
             });
         }
 
-        firebase.database().ref('Ruan').once("value").then(function(snapshot) {
-            renderLog(JSON.parse(snapshot.child("list").val()));
-        });
+        function saveLog(log) {
+            list = [];
+            
+            log.forEach(function(entry){
+                list.push("{\"date\":\"" + entry.date + "\", \"type\":\"" + entry.type + "\", \"category\":\"" + entry.category + "\", \"description\":\"" + entry.description + "\", \"amount\":" + entry.amount + ", \"approved\":" + entry.approved + "}");
+            });
+
+            firebase.database().ref("Ruan").set({
+                list: "[" + list.join() + "]"
+            });
+        }
+
+        function retrieveAndRenderLog() {
+            firebase.database().ref('Ruan').once("value").then(function(snapshot) {
+                renderLog(JSON.parse(snapshot.child("list").val()));
+            });
+        }
+
+        retrieveAndRenderLog();
     
     </script>
 </html>
