@@ -153,9 +153,17 @@
             panel.appendChild(panelBody);
 
             // Date
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -169,9 +177,13 @@
             $("#date").datepicker({dateFormat: "yy-mm-dd"});
 
             // Category
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -183,9 +195,17 @@
             field.type = "text";
 
             // Description
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -197,18 +217,17 @@
             field.type = "text";
 
             // Amount
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             inputGroup = document.createElement("div");
             inputGroup.className = "input-group";
             formGroup.appendChild(inputGroup);
-
-            inputGroupAddon = document.createElement("div");
-            inputGroupAddon.className = "input-group-addon";
-            inputGroupAddon.innerHTML = "R";
-            //inputGroup.appendChild(inputGroupAddon);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -220,9 +239,17 @@
             field.type = "text";
 
             // Status
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             label = document.createElement("label");
             formGroup.appendChild(label);
@@ -234,9 +261,13 @@
             label.innerHTML = label.innerHTML + " Approve";
 
             // Index
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
