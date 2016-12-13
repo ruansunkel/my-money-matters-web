@@ -24,166 +24,53 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
     </head>
     <body>
-        <div class="panel panel-default" style="margin: 20px">
-            <div class="panel-heading">
-                <h3 class="panel-title">Add Transaction</h3>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Date">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                                    Transaction
-                                </label>
-                                &nbsp;
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                    Transfer
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Category">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Description">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-                            <div class="input-group">
-                                <div class="input-group-addon">R</div>
-                                <input type="text" class="form-control" id="exampleInputAmount" placeholder="Amount">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox"> Approved
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <button class="btn btn-default" type="submit">Add</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        
     </body>
     
     <script type="text/javascript">
         function renderLog(log) {
             document.body.innerHTML = "";
 
-            container = document.createElement("div");
-            document.body.appendChild(container);
-
-            field = document.createElement("input");
-            field.id = "date";
-            field.name = "date";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("input");
-            field.id = "type";
-            field.name = "type";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("input");
-            field.id = "category";
-            field.name = "category";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("input");
-            field.id = "description";
-            field.name = "description";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("input");
-            field.id = "amount";
-            field.name = "amount";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("input");
-            field.id = "approved";
-            field.name = "approved";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("input");
-            field.id = "index";
-            field.name = "index";
-            field.type = "text";
-            container.appendChild(field);
-
-            field = document.createElement("div");
-            field.innerHTML = "Add";
-            container.appendChild(field);
-
-            field.onclick = function() {
-                entry = {
-                    date: document.getElementById("date").value,
-                    type: document.getElementById("type").value,
-                    category: document.getElementById("category").value,
-                    description: document.getElementById("description").value,
-                    amount: parseFloat(document.getElementById("amount").value),
-                    approved: document.getElementById("approved").value === "true"
-                };
-
-                log.splice(log.length-parseInt(document.getElementById("index").value), 0, entry);
-
-                saveLog(log);
-                renderLog(log);
-            }
-
             // Start with beautiful Form
+            var splitView = document.createElement("div");
+            splitView.className = "row";
+            document.body.appendChild(splitView);
 
-            // Get distinct categories
+            leftView = document.createElement("div");
+            leftView.className = "col-md-6";
+            splitView.appendChild(leftView);
+
+            rightView = document.createElement("div");
+            rightView.className = "col-md-6";
+            splitView.appendChild(rightView);
+
+            // Render Current View
             categories = {};
             log.forEach(function(entry){
                 categories[entry.category] = true;
             });
             
-            container = document.createElement("div");
-            container.className = "page-header";
-            container.style.margin = "20px";
-            document.body.appendChild(container);
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            panel.style.margin = "40px";
+            leftView.appendChild(panel);
 
-            header = document.createElement("h1");
-            header.innerHTML = "Current View";
-            container.appendChild(header);
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Current View";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
             
-            container = document.createElement("div");
-            container.style.width = "30%";
-            container.style.margin = "20px";
-            document.body.appendChild(container);
-            
+            // Current View
             table = document.createElement("table");
             table.className = "table table-striped table-bordered";
-            container.appendChild(table);
+            panelBody.appendChild(table);
             
             thead = document.createElement("thead");
             table.appendChild(thead);
@@ -279,25 +166,207 @@
             tr.appendChild(td);
             
             tbody.appendChild(tr);
-            
-            // Transaction List
-            container = document.createElement("div");
-            container.className = "page-header";
-            container.style.margin = "20px";
-            document.body.appendChild(container);
 
-            header = document.createElement("h1");
-            header.innerHTML = "Transaction Sheet";
-            container.appendChild(header);
-            
-            container = document.createElement("div");
-            container.style.width = "90%";
-            container.style.margin = "20px";
-            document.body.appendChild(container);
+
+            // Add Transaction Form
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            panel.style.margin = "40px";
+            rightView.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Add Transaction";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+
+            // Date
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Date";
+            field.id = "date";
+            field.name = "date";
+            field.type = "text";
+
+            // Type
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            radio = document.createElement("div");
+            radio.className = "radio";
+            formGroup.appendChild(radio);
+
+            label = document.createElement("label");
+            radio.appendChild(label);
+
+            field = document.createElement("input");
+            label.appendChild(field);
+
+            field.className = "radio";
+            field.value = "Transaction";
+            field.type = "radio";
+            field.name = "type";
+            field.id = "typeTransaction";
+            field.setAttribute("checked", true);
+            label.innerHTML = label.innerHTML + "Transaction";
+
+            radio.innerHTML = radio.innerHTML + "&nbsp;&nbsp;";
+
+            label = document.createElement("label");
+            radio.appendChild(label);
+
+            field = document.createElement("input");
+            label.appendChild(field);
+
+            field.className = "radio";
+            field.value = "Transfer";
+            field.type = "radio";
+            field.name = "type";
+            field.id = "typeTransfer";
+            label.innerHTML = label.innerHTML + "Transfer";
+
+            // Category
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Category";
+            field.id = "category";
+            field.name = "category";
+            field.type = "text";
+
+            // Description
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Description";
+            field.id = "description";
+            field.name = "description";
+            field.type = "text";
+
+            // Amount
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+            formGroup.appendChild(inputGroup);
+
+            inputGroupAddon = document.createElement("div");
+            inputGroupAddon.className = "input-group-addon";
+            inputGroupAddon.innerHTML = "R";
+            inputGroup.appendChild(inputGroupAddon);
+
+            field = document.createElement("input");
+            inputGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Amount";
+            field.id = "amount";
+            field.name = "amount";
+            field.type = "text";
+
+            // Status
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            label = document.createElement("label");
+            formGroup.appendChild(label);
+
+            field = document.createElement("input");
+            field.type = "checkbox";
+            field.id = "approved";
+            label.appendChild(field);
+            label.innerHTML = label.innerHTML + " Approve";
+
+            // Index
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Index";
+            field.id = "index";
+            field.name = "index";
+            field.type = "text";
+
+            // Button
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("button");
+            formGroup.appendChild(field);
+
+            field.className = "btn btn-default";
+            field.innerHTML = "Add Transaction";
+            field.type = "submit";
+
+            field.onclick = function() {
+                entry = {
+                    date: document.getElementById("date").value,
+                    type: document.getElementById("typeTransaction").isChecked ? "Transaction" : "Transfer",
+                    category: document.getElementById("category").value,
+                    description: document.getElementById("description").value,
+                    amount: parseFloat(document.getElementById("amount").value),
+                    approved: document.getElementById("approved").checked
+                };
+
+                log.splice(log.length - parseInt(document.getElementById("index").value), 0, entry);
+                saveLog(log);
+                renderLog(log);
+            }
+
+            // Transaction List
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            panel.style.margin = "40px";
+            document.body.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Transaction List";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
             
             table = document.createElement("table");
             table.className = "table table-striped table-bordered";
-            container.appendChild(table);
+            panelBody.appendChild(table);
             
             thead = document.createElement("thead");
             table.appendChild(thead);
@@ -306,6 +375,7 @@
             thead.appendChild(tr);
             
             th = document.createElement("th");
+            th.innerHTML = "#";
             tr.appendChild(th);
             th = document.createElement("th");
             th.innerHTML = "Date";
@@ -321,6 +391,10 @@
             tr.appendChild(th);
             th = document.createElement("th");
             th.innerHTML = "Result";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Actions";
+            th.setAttribute("colspan", "2");
             tr.appendChild(th);
             
             var tbody = document.createElement("tbody");
