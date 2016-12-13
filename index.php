@@ -132,7 +132,162 @@
             rightView.className = "col-md-6";
             splitView.appendChild(rightView);
 
-            // Render Current View
+
+            // TRANSACTION FORM
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            panel.style.margin = "40px";
+            leftView.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Transact";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+
+            // Date
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Date";
+            field.id = "date";
+            field.name = "date";
+            field.type = "text";
+
+            $("#date").datepicker({dateFormat: "yy-mm-dd"});
+
+            // Category
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Category";
+            field.id = "category";
+            field.name = "category";
+            field.type = "text";
+
+            // Description
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Description";
+            field.id = "description";
+            field.name = "description";
+            field.type = "text";
+
+            // Amount
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+            formGroup.appendChild(inputGroup);
+
+            inputGroupAddon = document.createElement("div");
+            inputGroupAddon.className = "input-group-addon";
+            inputGroupAddon.innerHTML = "R";
+            //inputGroup.appendChild(inputGroupAddon);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Amount";
+            field.id = "amount";
+            field.name = "amount";
+            field.type = "text";
+
+            // Status
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            label = document.createElement("label");
+            formGroup.appendChild(label);
+
+            field = document.createElement("input");
+            field.type = "checkbox";
+            field.id = "approved";
+            label.appendChild(field);
+            label.innerHTML = label.innerHTML + " Approve";
+
+            // Index
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Index";
+            field.id = "index";
+            field.name = "index";
+            field.type = "text";
+
+            // Button
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("button");
+            formGroup.appendChild(field);
+
+            field.className = "btn btn-default";
+            field.innerHTML = "Add Transaction";
+            field.type = "submit";
+
+            field.onclick = function() {
+                entry = {
+                    date: document.getElementById("date").value,
+                    type: "Transaction",
+                    category: document.getElementById("category").value,
+                    description: document.getElementById("description").value,
+                    amount: parseFloat(document.getElementById("amount").value),
+                    approved: document.getElementById("approved").checked
+                };
+
+                index = 0;
+                if (document.getElementById("index").value !== "") {
+                    index = log.length - parseInt(document.getElementById("index").value);
+
+                    if (index > log.length - 1) {
+                        index = 0;
+                    }
+                    if (index < 0) {
+                        index = 0;
+                    }
+                }
+
+                log.splice(index, 0, entry);
+                saveLog(log);
+                renderLog(log);
+            }
+
+
+            // CURRENT VIEW
             categories = {};
             log.forEach(function(entry){
                 categories[entry.category] = true;
@@ -255,198 +410,6 @@
             tr.appendChild(td);
             
             tbody.appendChild(tr);
-
-
-            // Add Transaction Form
-            panel = document.createElement("div");
-            panel.className = "panel panel-default";
-            panel.style.margin = "40px";
-            rightView.appendChild(panel);
-
-            panelHeading = document.createElement("div");
-            panelHeading.className = "panel-heading";
-            panel.appendChild(panelHeading);
-
-            panelTitle = document.createElement("h3");
-            panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Add Transaction";
-            panelHeading.appendChild(panelTitle);
-
-            panelBody = document.createElement("div");
-            panelBody.className = "panel-body";
-            panel.appendChild(panelBody);
-
-            // Date
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            field = document.createElement("input");
-            formGroup.appendChild(field);
-
-            field.className = "form-control";
-            field.placeholder = "Date";
-            field.id = "date";
-            field.name = "date";
-            field.type = "text";
-
-            $("#date").datepicker({dateFormat: "yy-mm-dd"});
-
-            // Type
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            radio = document.createElement("div");
-            radio.className = "radio";
-            formGroup.appendChild(radio);
-
-            label = document.createElement("label");
-            radio.appendChild(label);
-
-            field = document.createElement("input");
-            label.appendChild(field);
-
-            field.className = "radio";
-            field.value = "Transaction";
-            field.type = "radio";
-            field.name = "type";
-            field.id = "typeTransaction";
-            field.setAttribute("checked", true);
-            label.innerHTML = label.innerHTML + "Transaction";
-
-            radio.innerHTML = radio.innerHTML + "&nbsp;&nbsp;";
-
-            label = document.createElement("label");
-            radio.appendChild(label);
-
-            field = document.createElement("input");
-            label.appendChild(field);
-
-            field.className = "radio";
-            field.value = "Transfer";
-            field.type = "radio";
-            field.name = "type";
-            field.id = "typeTransfer";
-            label.innerHTML = label.innerHTML + "Transfer";
-
-            // Category
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            field = document.createElement("input");
-            formGroup.appendChild(field);
-
-            field.className = "form-control";
-            field.placeholder = "Category";
-            field.id = "category";
-            field.name = "category";
-            field.type = "text";
-
-            // Description
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            field = document.createElement("input");
-            formGroup.appendChild(field);
-
-            field.className = "form-control";
-            field.placeholder = "Description";
-            field.id = "description";
-            field.name = "description";
-            field.type = "text";
-
-            // Amount
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-            formGroup.appendChild(inputGroup);
-
-            inputGroupAddon = document.createElement("div");
-            inputGroupAddon.className = "input-group-addon";
-            inputGroupAddon.innerHTML = "R";
-            //inputGroup.appendChild(inputGroupAddon);
-
-            field = document.createElement("input");
-            formGroup.appendChild(field);
-
-            field.className = "form-control";
-            field.placeholder = "Amount";
-            field.id = "amount";
-            field.name = "amount";
-            field.type = "text";
-
-            // Status
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            label = document.createElement("label");
-            formGroup.appendChild(label);
-
-            field = document.createElement("input");
-            field.type = "checkbox";
-            field.id = "approved";
-            label.appendChild(field);
-            label.innerHTML = label.innerHTML + " Approve";
-
-            // Index
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            field = document.createElement("input");
-            formGroup.appendChild(field);
-
-            field.className = "form-control";
-            field.placeholder = "Index";
-            field.id = "index";
-            field.name = "index";
-            field.type = "text";
-
-            // Button
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            field = document.createElement("button");
-            formGroup.appendChild(field);
-
-            field.className = "btn btn-default";
-            field.innerHTML = "Add Transaction";
-            field.type = "submit";
-
-            field.onclick = function() {
-                entry = {
-                    date: document.getElementById("date").value,
-                    type: document.getElementById("typeTransaction").checked ? "Transaction" : "Transfer",
-                    category: document.getElementById("category").value,
-                    description: document.getElementById("description").value,
-                    amount: parseFloat(document.getElementById("amount").value),
-                    approved: document.getElementById("approved").checked
-                };
-
-                index = 0;
-                if (document.getElementById("index").value !== "") {
-                    index = log.length - parseInt(document.getElementById("index").value);
-
-                    if (index > log.length - 1) {
-                        index = 0;
-                    }
-                    if (index < 0) {
-                        index = 0;
-                    }
-                }
-
-                log.splice(index, 0, entry);
-                saveLog(log);
-                renderLog(log);
-            }
 
             // Transaction List
             panel = document.createElement("div");
@@ -599,6 +562,179 @@
                     renderLog(log);
                 }
             });
+
+            // Add Transfer Form
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            panel.style.margin = "40px";
+            rightView.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Transfer";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+
+            // Date
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Date";
+            field.id = "datetransfer";
+            field.name = "datetransfer";
+            field.type = "text";
+
+            $("#datetransfer").datepicker({dateFormat: "yy-mm-dd"});
+
+            // From Category
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "From Category";
+            field.id = "fromcategory";
+            field.name = "fromcategory";
+            field.type = "text";
+
+            // To Category
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "To Category";
+            field.id = "tocategory";
+            field.name = "tocategory";
+            field.type = "text";
+
+            // Description
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Description";
+            field.id = "transferdescription";
+            field.type = "text";
+
+            // Amount
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+            formGroup.appendChild(inputGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Amount";
+            field.id = "transferamount";
+            field.name = "amount";
+            field.type = "text";
+
+            // Status
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            label = document.createElement("label");
+            formGroup.appendChild(label);
+
+            field = document.createElement("input");
+            field.type = "checkbox";
+            field.id = "transferapproved";
+            label.appendChild(field);
+            label.innerHTML = label.innerHTML + " Approve";
+
+            // Index
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Index";
+            field.id = "transferindex";
+            field.name = "index";
+            field.type = "text";
+
+            // Button
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("button");
+            formGroup.appendChild(field);
+
+            field.className = "btn btn-default";
+            field.innerHTML = "Transfer";
+            field.type = "submit";
+
+            field.onclick = function() {
+                // Validation
+
+                entry1 = {
+                    date: document.getElementById("datetransfer").value,
+                    type: "Transfer",
+                    category: document.getElementById("fromcategory").value,
+                    description: document.getElementById("transferdescription").value,
+                    amount: -1 * parseFloat(document.getElementById("transferamount").value),
+                    approved: document.getElementById("transferapproved").checked
+                };
+
+                entry2 = {
+                    date: document.getElementById("datetransfer").value,
+                    type: "Transfer",
+                    category: document.getElementById("tocategory").value,
+                    description: document.getElementById("transferdescription").value,
+                    amount: parseFloat(document.getElementById("transferamount").value),
+                    approved: document.getElementById("transferapproved").checked
+                };
+
+                index = 0;
+                if (document.getElementById("transferindex").value !== "") {
+                    index = log.length - parseInt(document.getElementById("transferindex").value);
+
+                    if (index > log.length - 1) {
+                        index = 0;
+                    }
+                    if (index < 0) {
+                        index = 0;
+                    }
+                }
+
+                log.splice(index, 0, entry1);
+                log.splice(index, 0, entry2);
+                // saveLog(log);
+                renderLog(log);
+            }
         }
 
         function saveLog(log) {
