@@ -424,7 +424,7 @@
             field.onclick = function() {
                 entry = {
                     date: document.getElementById("date").value,
-                    type: document.getElementById("typeTransaction").isChecked ? "Transaction" : "Transfer",
+                    type: document.getElementById("typeTransaction").checked ? "Transaction" : "Transfer",
                     category: document.getElementById("category").value,
                     description: document.getElementById("description").value,
                     amount: parseFloat(document.getElementById("amount").value),
