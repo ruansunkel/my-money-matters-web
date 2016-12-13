@@ -3,30 +3,99 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Style-Type" content="text/css" />
-        <title>Tactical Budgeting 4</title>
+        <title>Tactical Budgeting</title>
 
-        <script src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
-        <script>
-            var config = {
+        <!--Include Bootstrap CSS-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+
+        <!--Include Firebase JS-->
+        <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
+        
+        <!--Initialize Firebase-->
+        <script type="text/javascript">
+            firebase.initializeApp({
                 apiKey: "AIzaSyDduHfieTkSq1KFVKxpmnok3Dg9jtkFtgA",
                 authDomain: "ruans-app-aa38f.firebaseapp.com",
                 databaseURL: "https://ruans-app-aa38f.firebaseio.com",
                 storageBucket: "ruans-app-aa38f.appspot.com",
                 messagingSenderId: "935783809503"
-            };
-            firebase.initializeApp(config);
-
-            firebase.auth().signInWithEmailAndPassword("rnsnkl@gmail.com", "P03p7129@firebase").catch(function(error) {
-                alert("Error signing in");
             });
         </script>
-        
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
     </head>
+    
     <body>
     </body>
     
     <script type="text/javascript">
+        function showLogin() {
+            document.body.innerHTML = "";
+
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            panel.style.width = "300px";
+            panel.style.margin = "40px auto 0px auto";
+            document.body.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Login";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+
+            // Username
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Username";
+            field.id = "username";
+            field.type = "text";
+
+            // Password
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Password";
+            field.id = "password";
+            field.type = "password";
+
+            // Login Button
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("button");
+            formGroup.appendChild(field);
+
+            field.className = "btn btn-default";
+            field.innerHTML = "Login";
+            field.onclick = function() {
+                firebase.auth().signInWithEmailAndPassword(document.getElementById("username").value, document.getElementById("password").value).then(function() {
+                    retrieveAndRenderLog(document.getElementById("username").value.split("@").join("_at_").split(".").join("_dot_"));
+                }, function(error){
+                    alert(error);
+                });
+            }
+        }
+
+        showLogin();
+
         function renderLog(log) {
             document.body.innerHTML = "";
 
@@ -510,13 +579,10 @@
             });
         }
 
-        function retrieveAndRenderLog() {
-            firebase.database().ref('Ruan').once("value").then(function(snapshot) {
+        function retrieveAndRenderLog(user) {
+            firebase.database().ref(user).once("value").then(function(snapshot) {
                 renderLog(JSON.parse(snapshot.child("list").val()));
             });
         }
-
-        retrieveAndRenderLog();
-    
     </script>
 </html>
