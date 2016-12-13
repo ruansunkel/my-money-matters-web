@@ -41,6 +41,16 @@
         function showLogin() {
             document.body.innerHTML = "";
 
+            pageHeader = document.createElement("div");
+            pageHeader.className = "page-header";
+            pageHeader.style.margin = "20px";
+            pageHeader.style.textAlign = "center";
+            document.body.appendChild(pageHeader);
+
+            h1 = document.createElement("h1");
+            h1.innerHTML = "Tactical Budgeting";
+            pageHeader.appendChild(h1);
+
             panel = document.createElement("div");
             panel.className = "panel panel-default";
             panel.style.width = "300px";
@@ -118,6 +128,16 @@
 
         function renderLog(log) {
             document.body.innerHTML = "";
+
+            pageHeader = document.createElement("div");
+            pageHeader.className = "page-header";
+            pageHeader.style.margin = "20px";
+            pageHeader.style.textAlign = "center";
+            document.body.appendChild(pageHeader);
+
+            h1 = document.createElement("h1");
+            h1.innerHTML = "Tactical Budgeting";
+            pageHeader.appendChild(h1);
 
             // Start with beautiful Form
             var splitView = document.createElement("div");
