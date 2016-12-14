@@ -5,3 +5,6 @@ Available(c) = Total(c) + TransactionsOut(c)
 Available = Total(c1..n) + TransactionOut(c1..n)
 
 Unaccounted = TransfersIn(c1..n) + TransfersOut(c1..n)
+
+
+Available(c) = TransactionsIn(c) + Transfers(c) + TransactionsOut(c)
