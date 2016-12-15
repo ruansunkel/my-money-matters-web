@@ -307,7 +307,7 @@
             formGroup.appendChild(field);
 
             field.className = "btn btn-default";
-            field.innerHTML = "Add Transaction";
+            field.innerHTML = "Transact";
             field.type = "submit";
 
             field.onclick = function() {
@@ -614,7 +614,8 @@
                 }
             });
 
-            // Add Transfer Form
+
+            // TRANSFER FORM
             panel = document.createElement("div");
             panel.className = "panel panel-default";
             panel.style.margin = "40px";
@@ -634,9 +635,17 @@
             panel.appendChild(panelBody);
 
             // Date
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -649,10 +658,40 @@
 
             $("#datetransfer").datepicker({dateFormat: "yy-mm-dd"});
 
-            // From Category
+            // Amount
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
+
+            inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+            formGroup.appendChild(inputGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Amount";
+            field.id = "transferamount";
+            field.name = "amount";
+            field.type = "text";
+
+            // From Category
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -664,9 +703,13 @@
             field.type = "text";
 
             // To Category
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
@@ -690,28 +733,18 @@
             field.id = "transferdescription";
             field.type = "text";
 
-            // Amount
-            formGroup = document.createElement("div");
-            formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
-
-            inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-            formGroup.appendChild(inputGroup);
-
-            field = document.createElement("input");
-            formGroup.appendChild(field);
-
-            field.className = "form-control";
-            field.placeholder = "Amount";
-            field.id = "transferamount";
-            field.name = "amount";
-            field.type = "text";
-
             // Status
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             label = document.createElement("label");
             formGroup.appendChild(label);
@@ -723,9 +756,13 @@
             label.innerHTML = label.innerHTML + " Approve";
 
             // Index
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
             formGroup = document.createElement("div");
             formGroup.className = "form-group";
-            panelBody.appendChild(formGroup);
+            col6.appendChild(formGroup);
 
             field = document.createElement("input");
             formGroup.appendChild(field);
