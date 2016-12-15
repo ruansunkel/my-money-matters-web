@@ -3,6 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Style-Type" content="text/css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>Tactical Budgeting</title>
 
         <!--Include Bootstrap CSS-->
@@ -129,6 +130,7 @@
 
         function renderLog(log) {
             document.body.innerHTML = "";
+            document.body.className = "container-fluid";
 
             // Get Unique Categories
             log.forEach(function(entry){
@@ -162,7 +164,6 @@
             // TRANSACTION FORM
             panel = document.createElement("div");
             panel.className = "panel panel-default";
-            panel.style.margin = "40px";
             rightView.appendChild(panel);
 
             panelHeading = document.createElement("div");
@@ -349,7 +350,6 @@
             // CURRENT VIEW
             panel = document.createElement("div");
             panel.className = "panel panel-default";
-            panel.style.margin = "40px";
             leftView.appendChild(panel);
 
             panelHeading = document.createElement("div");
@@ -468,7 +468,6 @@
             // Transaction List
             panel = document.createElement("div");
             panel.className = "panel panel-default";
-            panel.style.margin = "40px";
             document.body.appendChild(panel);
 
             panelHeading = document.createElement("div");
@@ -621,7 +620,6 @@
             // TRANSFER FORM
             panel = document.createElement("div");
             panel.className = "panel panel-default";
-            panel.style.margin = "40px";
             rightView.appendChild(panel);
 
             panelHeading = document.createElement("div");
