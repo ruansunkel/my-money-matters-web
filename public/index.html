@@ -37,6 +37,7 @@
     
     <script type="text/javascript">
         user = "";
+        categories = {};
 
         function showLogin() {
             document.body.innerHTML = "";
@@ -129,6 +130,11 @@
         function renderLog(log) {
             document.body.innerHTML = "";
 
+            // Get Unique Categories
+            log.forEach(function(entry){
+                categories[entry.category] = true;
+            });
+
             pageHeader = document.createElement("div");
             pageHeader.className = "page-header";
             pageHeader.style.margin = "20px";
@@ -213,6 +219,8 @@
             field.id = "category";
             field.name = "category";
             field.type = "text";
+
+            $("#category").autocomplete({source: Object.keys(categories).sort()});
 
             // Description
             row = document.createElement("div");
@@ -339,11 +347,6 @@
 
 
             // CURRENT VIEW
-            categories = {};
-            log.forEach(function(entry){
-                categories[entry.category] = true;
-            });
-            
             panel = document.createElement("div");
             panel.className = "panel panel-default";
             panel.style.margin = "40px";
@@ -702,6 +705,8 @@
             field.name = "fromcategory";
             field.type = "text";
 
+            $("#fromcategory").autocomplete({source: Object.keys(categories).sort()});
+
             // To Category
             col6 = document.createElement("div");
             col6.className = "col-md-6";
@@ -719,6 +724,8 @@
             field.id = "tocategory";
             field.name = "tocategory";
             field.type = "text";
+
+            $("#tocategory").autocomplete({source: Object.keys(categories).sort()});
 
             // Description
             formGroup = document.createElement("div");
