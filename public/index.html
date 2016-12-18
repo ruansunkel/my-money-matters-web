@@ -40,6 +40,34 @@
         user = "";
         categories = {};
 
+        /* FORMATTING FUNCTIONS */
+        function roundToTwoDecimalPlaces(number) {
+            return Math.round(number * 100) / 100;
+        }
+
+        function formatForDisplay(number) {
+            return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
+        }
+
+        /* LOG FUNCTIONS */
+        function getApprovedEntriesForCategoryInLog(category, log) {
+            return log.filter(function(entry){
+                return entry.category === category && entry.approved;
+            });
+        }
+
+        function calculateLogSum(log) {
+            return log.reduce(function(accumulator, entry) {
+                return accumulator + entry.amount;
+            }, 0);
+        }
+
+        function calculateAvailaleBalanceForCategoryInLog(category, log) {
+            approvedCategoryEntries = getApprovedEntriesForCategoryInLog(category, log);
+            return calculateLogSum(approvedCategoryEntries);
+        }
+
+        /* LOGIN VIEW */
         function showLogin() {
             document.body.innerHTML = "";
 
@@ -408,7 +436,7 @@
                 
                 td = document.createElement("td");
                 tr.appendChild(td);
-                td.innerHTML = (Math.round((initial + spent) * 100) / 100).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
+                td.innerHTML = formatForDisplay(calculateAvailaleBalanceForCategoryInLog(key, log));
                 
                 if (initial === initial + spent) {
                     tr.className = "success";
