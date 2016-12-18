@@ -473,25 +473,6 @@
             tr.appendChild(td);
             
             tbody.appendChild(tr);
-            
-            // Unaccounted Balance
-            tr = document.createElement("tr");
-            td = document.createElement("td");
-            tr.appendChild(td);
-            b = document.createElement("b");
-            b.innerHTML = "FLOATING";
-            td.appendChild(b);
-            
-            var transfers = log.reduce(function(accumulator, entry){
-                return accumulator + ((entry.type === "Transfer") ? entry.amount : 0);
-            }, 0);
-            transfers = Math.round(initial * 100) / 100;
-            
-            td = document.createElement("td");
-            td.innerHTML = "<b>" + Math.abs(transfers).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + "</br>";
-            tr.appendChild(td);
-            
-            tbody.appendChild(tr);
 
             // Transaction List
             panel = document.createElement("div");
