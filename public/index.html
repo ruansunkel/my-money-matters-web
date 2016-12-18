@@ -63,8 +63,7 @@
         }
 
         function calculateAvailaleBalanceForCategoryInLog(category, log) {
-            approvedCategoryEntries = getApprovedEntriesForCategoryInLog(category, log);
-            return calculateLogSum(approvedCategoryEntries);
+            return calculateLogSum(getApprovedEntriesForCategoryInLog(category, log));
         }
 
         /* LOGIN VIEW */
