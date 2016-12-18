@@ -468,7 +468,7 @@
             spent = Math.round(spent * 100) / 100;
             
             td = document.createElement("td");
-            td.innerHTML = "<b>" + (Math.round((initial + spent) * 100) / 100).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + "</br>";
+            td.innerHTML = "<b>" + formatForDisplay(initial + spent) + "</br>";
             tr.appendChild(td);
             
             tbody.appendChild(tr);
@@ -545,10 +545,10 @@
                 tr.appendChild(td);
                 tbody.appendChild(tr);
                 if (entry.amount > 0) {
-                    td.innerHTML = entry.amount.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
+                    td.innerHTML = formatForDisplay(entry.amount)+ (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
                 }
                 else{
-                    td.innerHTML = Math.abs(entry.amount).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
+                    td.innerHTML = formatForDisplay(Math.abs(entry.amount)) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
                 }
                         
                 td = document.createElement("td");
@@ -575,7 +575,7 @@
                 td = document.createElement("td");
                 tr.appendChild(td);
                 tbody.appendChild(tr);
-                td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + previous.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' }) + " to " + balance.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' })
+                td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + formatForDisplay(previous) + " to " + formatForDisplay(balance);
                 
                 if (balance < 0) {
                     tr.className = "danger";
@@ -855,7 +855,5 @@
                 renderLog(JSON.parse(snapshot.child("list").val()));
             });
         }
-
-        // retrieveAndRenderLog("rnsnkl@gmail.com".split("@").join("_at_").split(".").join("_dot_"));
     </script>
 </html>
