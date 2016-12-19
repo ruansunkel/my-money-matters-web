@@ -20,23 +20,19 @@
 
         <!--Include Firebase JS-->
         <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
-        
-        <!--Initialize Firebase-->
-        <script type="text/javascript">
-            firebase.initializeApp({
-                apiKey: "AIzaSyDduHfieTkSq1KFVKxpmnok3Dg9jtkFtgA",
-                authDomain: "ruans-app-aa38f.firebaseapp.com",
-                databaseURL: "https://ruans-app-aa38f.firebaseio.com",
-                storageBucket: "ruans-app-aa38f.appspot.com",
-                messagingSenderId: "935783809503"
-            });
-        </script>
     </head>
 
-    <body>
-    </body>
+    <body></body>
     
     <script type="text/javascript">
+        firebase.initializeApp({
+            apiKey: "AIzaSyDduHfieTkSq1KFVKxpmnok3Dg9jtkFtgA",
+            authDomain: "ruans-app-aa38f.firebaseapp.com",
+            databaseURL: "https://ruans-app-aa38f.firebaseio.com",
+            storageBucket: "ruans-app-aa38f.appspot.com",
+            messagingSenderId: "935783809503"
+        });
+
         user = "";
         categories = {};
 
@@ -64,6 +60,22 @@
 
         function calculateAvailaleBalanceForCategoryInLog(category, log) {
             return calculateLogSum(getApprovedEntriesForCategoryInLog(category, log));
+        }
+
+        function getMostRecentPositiveTransferIndexForCategoryInLog(category, log) {
+            return log.findIndex(function(entry) {
+                return entry.type === "Transfer" && entry.category === category && entry.amount > 0;
+            });
+        }
+
+        function getLogUpToIndex(log, index) {
+            return log.slice(0, index);
+        }
+
+        function getOutgoingTransactionsForCategoryInLog(category, log) {
+            return log.filter(function(entry) {
+                return entry.category === category && entry.amount < 0 && entry.type === "Transaction";
+            });
         }
 
         /* LOGIN VIEW */
