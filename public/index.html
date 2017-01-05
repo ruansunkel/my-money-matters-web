@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Tactical Budgeting</title>
+
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Style-Type" content="text/css" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <title>Tactical Budgeting</title>
 
         <!--Include Bootstrap CSS-->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
@@ -25,6 +26,7 @@
     <body></body>
     
     <script type="text/javascript">
+        /* FIREBASE INITIALIZATION */
         firebase.initializeApp({
             apiKey: "AIzaSyDduHfieTkSq1KFVKxpmnok3Dg9jtkFtgA",
             authDomain: "ruans-app-aa38f.firebaseapp.com",
@@ -33,6 +35,7 @@
             messagingSenderId: "935783809503"
         });
 
+        /* GLOBAL VAIRABLES */
         user = "";
         categories = {};
 
@@ -78,8 +81,68 @@
             });
         }
 
-        /* LOGIN VIEW */
-        function showLogin() {
+        function saveLog(log) {
+            list = [];
+            
+            log.forEach(function(entry){
+                list.push("{\"date\":\"" + entry.date + "\", \"type\":\"" + entry.type + "\", \"category\":\"" + entry.category + "\", \"description\":\"" + entry.description + "\", \"amount\":" + entry.amount + ", \"approved\":" + entry.approved + "}");
+            });
+
+            firebase.database().ref(user).set({
+                list: "[" + list.join() + "]"
+            });
+        }
+
+        function renderLog(log) {
+            // Clear Screen
+            document.body.innerHTML = "";
+            document.body.className = "container-fluid";
+
+            // Get Unique Categories
+            log.forEach(function(entry){
+                categories[entry.category] = true;
+            });
+
+            // Page Header
+            pageHeader = document.createElement("div");
+            pageHeader.className = "page-header";
+            pageHeader.style.margin = "20px";
+            pageHeader.style.textAlign = "center";
+            document.body.appendChild(pageHeader);
+
+            h1 = document.createElement("h1");
+            h1.innerHTML = "Tactical Budgeting";
+            pageHeader.appendChild(h1);
+
+            // 2 Column View
+            splitView = document.createElement("div");
+            splitView.className = "row";
+            document.body.appendChild(splitView);
+
+            // Left View
+            leftView = document.createElement("div");
+            leftView.className = "col-md-6";
+            splitView.appendChild(leftView);
+
+            // Right View
+            rightView = document.createElement("div");
+            rightView.className = "col-md-6";
+            splitView.appendChild(rightView);
+
+            renderCurrentViewInContainerForLog(leftView, log);
+            renderTransactionFormInContainerForLog(rightView, log);
+            renderTransferFormInContainerForLog(rightView, log);
+            renderTransactionListInContainerForLog(document.body, log);
+        }
+
+        function retrieveAndRenderLog(user) {
+            firebase.database().ref(user).once("value").then(function(snapshot) {
+                renderLog(JSON.parse(snapshot.child("list").val()));
+            });
+        }
+
+        /* SCREEN RENDER FUNCTIONS */
+        function renderLoginScreen() {
             document.body.innerHTML = "";
 
             pageHeader = document.createElement("div");
@@ -165,45 +228,265 @@
             }
         }
 
-        showLogin();
+        function renderCurrentViewInContainerForLog(container, log) {
+            // CURRENT VIEW
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            container.appendChild(panel);
 
-        function renderLog(log) {
-            document.body.innerHTML = "";
-            document.body.className = "container-fluid";
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
 
-            // Get Unique Categories
-            log.forEach(function(entry){
-                categories[entry.category] = true;
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Current View";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+            
+            // Current View
+            table = document.createElement("table");
+            table.className = "table table-striped table-bordered";
+            panelBody.appendChild(table);
+            
+            thead = document.createElement("thead");
+            table.appendChild(thead);
+            
+            tr = document.createElement("tr");
+            thead.appendChild(tr);
+            
+            th = document.createElement("th");
+            th.innerHTML = "Category";
+            tr.appendChild(th);
+            
+            th = document.createElement("th");
+            th.innerHTML = "Available";
+            tr.appendChild(th);
+            
+            tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+        
+            Object.keys(categories).sort().forEach(function(key){
+                tr = document.createElement("tr");
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                td.innerHTML = key;
+                
+                var initial = log.reduce(function(accumulator, entry){
+                    return accumulator
+                    + ((entry.category === key && entry.type === "Transfer" && entry.approved) ? entry.amount : 0)
+                    + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount > 0) ? entry.amount : 0);
+                }, 0);
+                initial = Math.round(initial * 100) / 100;
+                
+                var spent = log.reduce(function(accumulator, entry){
+                    return accumulator + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount < 0) ? entry.amount : 0);
+                }, 0);
+                spent = Math.round(spent * 100) / 100;
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                td.innerHTML = formatForDisplay(calculateAvailaleBalanceForCategoryInLog(key, log));
+                
+                if (initial === initial + spent) {
+                    tr.className = "success";
+                }
+                if (initial + spent === 0) {
+                    tr.className = "danger";
+                }
+
+                if (initial + spent > 0) {
+                    tbody.appendChild(tr);
+                }
             });
+            
+            // Available Balance
+            tr = document.createElement("tr");
+            td = document.createElement("td");
+            tr.appendChild(td);
+            b = document.createElement("b");
+            b.innerHTML = "TOTAL";
+            td.appendChild(b);
+            
+            var initial = log.reduce(function(accumulator, entry){
+                return accumulator + ((entry.type === "Transfer" && entry.approved) ? entry.amount : 0);
+            }, 0);
+            initial = Math.round(initial * 100) / 100;
+            
+            var spent = log.reduce(function(accumulator, entry){
+                return accumulator + ((entry.type === "Transaction" && entry.approved) ? entry.amount : 0);
+            }, 0);
+            spent = Math.round(spent * 100) / 100;
+            
+            td = document.createElement("td");
+            td.innerHTML = "<b>" + formatForDisplay(initial + spent) + "</br>";
+            tr.appendChild(td);
+            
+            tbody.appendChild(tr);
+        }
 
-            pageHeader = document.createElement("div");
-            pageHeader.className = "page-header";
-            pageHeader.style.margin = "20px";
-            pageHeader.style.textAlign = "center";
-            document.body.appendChild(pageHeader);
+        function renderTransactionListInContainerForLog(container, log) {
+            // Transaction List
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            container.appendChild(panel);
 
-            h1 = document.createElement("h1");
-            h1.innerHTML = "Tactical Budgeting";
-            pageHeader.appendChild(h1);
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
 
-            // Start with beautiful Form
-            var splitView = document.createElement("div");
-            splitView.className = "row";
-            document.body.appendChild(splitView);
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Transaction List";
+            panelHeading.appendChild(panelTitle);
 
-            leftView = document.createElement("div");
-            leftView.className = "col-md-6";
-            splitView.appendChild(leftView);
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+            
+            table = document.createElement("table");
+            table.className = "table table-striped table-bordered";
+            panelBody.appendChild(table);
+            
+            thead = document.createElement("thead");
+            table.appendChild(thead);
+            
+            tr = document.createElement("tr");
+            thead.appendChild(tr);
+            
+            th = document.createElement("th");
+            th.innerHTML = "#";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Date";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Type";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Category";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Description";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Result";
+            tr.appendChild(th);
+            th = document.createElement("th");
+            th.innerHTML = "Actions";
+            th.setAttribute("colspan", "2");
+            tr.appendChild(th);
+            
+            var tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+            
+            log.forEach(function(entry, index){
+                var tr = document.createElement("tr");
+                var td = document.createElement("td");
+                
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                
+                td.innerHTML = log.length - index;
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                td.innerHTML = entry.date;
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                if (entry.amount > 0) {
+                    td.innerHTML = formatForDisplay(entry.amount)+ (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
+                }
+                else{
+                    td.innerHTML = formatForDisplay(Math.abs(entry.amount)) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
+                }
+                        
+                td = document.createElement("td");
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                td.innerHTML = entry.category;
+                        
+                td = document.createElement("td");
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                td.innerHTML = entry.description;
+                        
+                balance = 0;
+                for (i = log.length - 1; i >= index; i--) {
+                    if (entry.category === log[i].category) {
+                        balance += log[i].amount;
+                    }
+                }
+                balance = Math.round(balance * 100) / 100;
+                
+                previous = (balance - entry.amount);
+                previous = Math.round(previous * 100) / 100;
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + formatForDisplay(previous) + " to " + formatForDisplay(balance);
+                
+                if (balance < 0) {
+                    tr.className = "danger";
+                }
+                
+                if (entry.amount > 0 && entry.type === "Transaction") {
+                    tr.className = "success";
+                }
 
-            rightView = document.createElement("div");
-            rightView.className = "col-md-6";
-            splitView.appendChild(rightView);
+                if (!entry.approved) {
+                    tr.className = "info";
+                }
 
+                // Approve Entry
+                td = document.createElement("td");
+                td.innerHTML = entry.approved ? "Disable" : "Approve";
+                td.style.cursor = "pointer";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
 
+                td.onclick = function() {
+                    entry = log[index];
+                    entry.approved = !entry.approved;
+
+                    log.splice(index, 1, entry);
+
+                    saveLog(log);
+                    renderLog(log);
+                }
+
+                // Remove Entry
+                td = document.createElement("td");
+                td.innerHTML = "Remove";
+                td.style.cursor = "pointer";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                td.onclick = function() {
+                    if (!window.confirm("Are you sure you want to remove this entry?")) {
+                        return;
+                    }
+
+                    log.splice(index, 1);
+                    saveLog(log);
+                    renderLog(log);
+                }
+            });
+        }
+
+        function renderTransactionFormInContainerForLog(container, log) {
             // TRANSACTION FORM
             panel = document.createElement("div");
             panel.className = "panel panel-default";
-            rightView.appendChild(panel);
+            container.appendChild(panel);
 
             panelHeading = document.createElement("div");
             panelHeading.className = "panel-heading";
@@ -384,263 +667,13 @@
                 saveLog(log);
                 renderLog(log);
             }
+        }
 
-
-            // CURRENT VIEW
-            panel = document.createElement("div");
-            panel.className = "panel panel-default";
-            leftView.appendChild(panel);
-
-            panelHeading = document.createElement("div");
-            panelHeading.className = "panel-heading";
-            panel.appendChild(panelHeading);
-
-            panelTitle = document.createElement("h3");
-            panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Current View";
-            panelHeading.appendChild(panelTitle);
-
-            panelBody = document.createElement("div");
-            panelBody.className = "panel-body";
-            panel.appendChild(panelBody);
-            
-            // Current View
-            table = document.createElement("table");
-            table.className = "table table-striped table-bordered";
-            panelBody.appendChild(table);
-            
-            thead = document.createElement("thead");
-            table.appendChild(thead);
-            
-            tr = document.createElement("tr");
-            thead.appendChild(tr);
-            
-            th = document.createElement("th");
-            th.innerHTML = "Category";
-            tr.appendChild(th);
-            
-            th = document.createElement("th");
-            th.innerHTML = "Available";
-            tr.appendChild(th);
-            
-            tbody = document.createElement("tbody");
-            table.appendChild(tbody);
-        
-            Object.keys(categories).sort().forEach(function(key){
-                tr = document.createElement("tr");
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = key;
-                
-                var initial = log.reduce(function(accumulator, entry){
-                    return accumulator
-                    + ((entry.category === key && entry.type === "Transfer" && entry.approved) ? entry.amount : 0)
-                    + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount > 0) ? entry.amount : 0);
-                }, 0);
-                initial = Math.round(initial * 100) / 100;
-                
-                var spent = log.reduce(function(accumulator, entry){
-                    return accumulator + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount < 0) ? entry.amount : 0);
-                }, 0);
-                spent = Math.round(spent * 100) / 100;
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = formatForDisplay(calculateAvailaleBalanceForCategoryInLog(key, log));
-                
-                if (initial === initial + spent) {
-                    tr.className = "success";
-                }
-                if (initial + spent === 0) {
-                    tr.className = "danger";
-                }
-
-                if (initial + spent > 0) {
-                    tbody.appendChild(tr);
-                }
-            });
-            
-            // Available Balance
-            tr = document.createElement("tr");
-            td = document.createElement("td");
-            tr.appendChild(td);
-            b = document.createElement("b");
-            b.innerHTML = "TOTAL";
-            td.appendChild(b);
-            
-            var initial = log.reduce(function(accumulator, entry){
-                return accumulator + ((entry.type === "Transfer" && entry.approved) ? entry.amount : 0);
-            }, 0);
-            initial = Math.round(initial * 100) / 100;
-            
-            var spent = log.reduce(function(accumulator, entry){
-                return accumulator + ((entry.type === "Transaction" && entry.approved) ? entry.amount : 0);
-            }, 0);
-            spent = Math.round(spent * 100) / 100;
-            
-            td = document.createElement("td");
-            td.innerHTML = "<b>" + formatForDisplay(initial + spent) + "</br>";
-            tr.appendChild(td);
-            
-            tbody.appendChild(tr);
-
-            // Transaction List
-            panel = document.createElement("div");
-            panel.className = "panel panel-default";
-            document.body.appendChild(panel);
-
-            panelHeading = document.createElement("div");
-            panelHeading.className = "panel-heading";
-            panel.appendChild(panelHeading);
-
-            panelTitle = document.createElement("h3");
-            panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Transaction List";
-            panelHeading.appendChild(panelTitle);
-
-            panelBody = document.createElement("div");
-            panelBody.className = "panel-body";
-            panel.appendChild(panelBody);
-            
-            table = document.createElement("table");
-            table.className = "table table-striped table-bordered";
-            panelBody.appendChild(table);
-            
-            thead = document.createElement("thead");
-            table.appendChild(thead);
-            
-            tr = document.createElement("tr");
-            thead.appendChild(tr);
-            
-            th = document.createElement("th");
-            th.innerHTML = "#";
-            tr.appendChild(th);
-            th = document.createElement("th");
-            th.innerHTML = "Date";
-            tr.appendChild(th);
-            th = document.createElement("th");
-            th.innerHTML = "Type";
-            tr.appendChild(th);
-            th = document.createElement("th");
-            th.innerHTML = "Category";
-            tr.appendChild(th);
-            th = document.createElement("th");
-            th.innerHTML = "Description";
-            tr.appendChild(th);
-            th = document.createElement("th");
-            th.innerHTML = "Result";
-            tr.appendChild(th);
-            th = document.createElement("th");
-            th.innerHTML = "Actions";
-            th.setAttribute("colspan", "2");
-            tr.appendChild(th);
-            
-            var tbody = document.createElement("tbody");
-            table.appendChild(tbody);
-            
-            log.forEach(function(entry, index){
-                var tr = document.createElement("tr");
-                var td = document.createElement("td");
-                
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                
-                td.innerHTML = log.length - index;
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                td.innerHTML = entry.date;
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                if (entry.amount > 0) {
-                    td.innerHTML = formatForDisplay(entry.amount)+ (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
-                }
-                else{
-                    td.innerHTML = formatForDisplay(Math.abs(entry.amount)) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
-                }
-                        
-                td = document.createElement("td");
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                td.innerHTML = entry.category;
-                        
-                td = document.createElement("td");
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                td.innerHTML = entry.description;
-                        
-                balance = 0;
-                for (i = log.length - 1; i >= index; i--) {
-                    if (entry.category === log[i].category) {
-                        balance += log[i].amount;
-                    }
-                }
-                balance = Math.round(balance * 100) / 100;
-                
-                previous = (balance - entry.amount);
-                previous = Math.round(previous * 100) / 100;
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-                td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + formatForDisplay(previous) + " to " + formatForDisplay(balance);
-                
-                if (balance < 0) {
-                    tr.className = "danger";
-                }
-                
-                if (entry.amount > 0 && entry.type === "Transaction") {
-                    tr.className = "success";
-                }
-
-                if (!entry.approved) {
-                    tr.className = "info";
-                }
-
-                // Approve Entry
-                td = document.createElement("td");
-                td.innerHTML = entry.approved ? "Disable" : "Approve";
-                td.style.cursor = "pointer";
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-
-                td.onclick = function() {
-                    entry = log[index];
-                    entry.approved = !entry.approved;
-
-                    log.splice(index, 1, entry);
-
-                    saveLog(log);
-                    renderLog(log);
-                }
-
-                // Remove Entry
-                td = document.createElement("td");
-                td.innerHTML = "Remove";
-                td.style.cursor = "pointer";
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-
-                td.onclick = function() {
-                    if (!window.confirm("Are you sure you want to remove this entry?")) {
-                        return;
-                    }
-
-                    log.splice(index, 1);
-                    saveLog(log);
-                    renderLog(log);
-                }
-            });
-
-
+        function renderTransferFormInContainerForLog(container, log) {
             // TRANSFER FORM
             panel = document.createElement("div");
             panel.className = "panel panel-default";
-            rightView.appendChild(panel);
+            container.appendChild(panel);
 
             panelHeading = document.createElement("div");
             panelHeading.className = "panel-heading";
@@ -850,22 +883,6 @@
             }
         }
 
-        function saveLog(log) {
-            list = [];
-            
-            log.forEach(function(entry){
-                list.push("{\"date\":\"" + entry.date + "\", \"type\":\"" + entry.type + "\", \"category\":\"" + entry.category + "\", \"description\":\"" + entry.description + "\", \"amount\":" + entry.amount + ", \"approved\":" + entry.approved + "}");
-            });
-
-            firebase.database().ref(user).set({
-                list: "[" + list.join() + "]"
-            });
-        }
-
-        function retrieveAndRenderLog(user) {
-            firebase.database().ref(user).once("value").then(function(snapshot) {
-                renderLog(JSON.parse(snapshot.child("list").val()));
-            });
-        }
+        renderLoginScreen();
     </script>
 </html>
