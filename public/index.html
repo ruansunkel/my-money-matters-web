@@ -133,6 +133,7 @@
             renderTransactionFormInContainerForLog(rightView, log);
             renderTransferFormInContainerForLog(rightView, log);
             renderTransactionListInContainerForLog(document.body, log);
+            renderIncomingFormInContainerForLog(rightView, log);
         }
 
         function retrieveAndRenderLog(user) {
@@ -647,7 +648,7 @@
                     type: "Transaction",
                     category: document.getElementById("category").value,
                     description: document.getElementById("description").value,
-                    amount: parseFloat(document.getElementById("amount").value),
+                    amount: -Math.abs(parseFloat(document.getElementById("amount").value)),
                     approved: document.getElementById("approved").checked
                 };
 
@@ -878,6 +879,193 @@
 
                 log.splice(index, 0, entry1);
                 log.splice(index, 0, entry2);
+                saveLog(log);
+                renderLog(log);
+            }
+        }
+
+        function renderIncomingFormInContainerForLog(container, log) {
+            // INCOMING FORM
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            container.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Incoming";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+
+            // Date
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Date";
+            field.id = "incomingdate";
+            field.name = "date";
+            field.type = "text";
+
+            $("#incomingdate").datepicker({dateFormat: "yy-mm-dd"});
+
+            // Category
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Category";
+            field.id = "incomingcategory";
+            field.name = "category";
+            field.type = "text";
+
+            $("#incomingcategory").autocomplete({source: Object.keys(categories).sort()});
+
+            // Description
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Description";
+            field.id = "incomingdescription";
+            field.name = "description";
+            field.type = "text";
+
+            // Amount
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
+
+            inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+            formGroup.appendChild(inputGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Amount";
+            field.id = "incomingamount";
+            field.name = "amount";
+            field.type = "text";
+
+            // Status
+            row = document.createElement("div");
+            row.className = "row";
+            panelBody.appendChild(row);
+
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
+
+            label = document.createElement("label");
+            formGroup.appendChild(label);
+
+            field = document.createElement("input");
+            field.type = "checkbox";
+            field.id = "incomingapproved";
+            label.appendChild(field);
+            label.innerHTML = label.innerHTML + " Approve";
+
+            // Index
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            row.appendChild(col6);
+
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            col6.appendChild(formGroup);
+
+            field = document.createElement("input");
+            formGroup.appendChild(field);
+
+            field.className = "form-control";
+            field.placeholder = "Index";
+            field.id = "incomingindex";
+            field.name = "index";
+            field.type = "text";
+
+            // Button
+            formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            panelBody.appendChild(formGroup);
+
+            field = document.createElement("button");
+            formGroup.appendChild(field);
+
+            field.className = "btn btn-default";
+            field.innerHTML = "Transact";
+            field.type = "submit";
+
+            field.onclick = function() {
+                entry = {
+                    date: document.getElementById("incomingdate").value,
+                    type: "Transaction",
+                    category: document.getElementById("incomingcategory").value,
+                    description: document.getElementById("incomingdescription").value,
+                    amount: Math.abs(parseFloat(document.getElementById("incomingamount").value)),
+                    approved: document.getElementById("incomingapproved").checked
+                };
+
+                index = 0;
+                if (document.getElementById("incomingindex").value !== "") {
+                    index = log.length - parseInt(document.getElementById("incomingindex").value);
+
+                    if (index > log.length - 1) {
+                        index = 0;
+                    }
+                    if (index < 0) {
+                        index = 0;
+                    }
+                }
+
+                log.splice(index, 0, entry);
                 saveLog(log);
                 renderLog(log);
             }
