@@ -102,49 +102,6 @@
             });
         }
 
-        function renderLog(log) {
-            // Clear Screen
-            document.body.innerHTML = "";
-            document.body.className = "container-fluid";
-
-            // Get Unique Categories
-            log.forEach(function(entry){
-                categories[entry.category] = true;
-            });
-
-            // Page Header
-            pageHeader = document.createElement("div");
-            pageHeader.className = "page-header";
-            pageHeader.style.margin = "20px";
-            pageHeader.style.textAlign = "center";
-            document.body.appendChild(pageHeader);
-
-            h1 = document.createElement("h1");
-            h1.innerHTML = "Tactical Budgeting";
-            pageHeader.appendChild(h1);
-
-            // 2 Column View
-            splitView = document.createElement("div");
-            splitView.className = "row";
-            document.body.appendChild(splitView);
-
-            // Left View
-            leftView = document.createElement("div");
-            leftView.className = "col-md-6";
-            splitView.appendChild(leftView);
-
-            // Right View
-            rightView = document.createElement("div");
-            rightView.className = "col-md-6";
-            splitView.appendChild(rightView);
-
-            renderCurrentViewInContainerForLog(leftView, log);
-            renderTransactionFormInContainerForLog(rightView, log);
-            renderTransferFormInContainerForLog(rightView, log);
-            renderTransactionListInContainerForLog(document.body, log);
-            renderIncomingFormInContainerForLog(rightView, log);
-        }
-
         function retrieveAndRenderLog(user) {
             firebase.database().ref(user).once("value").then(function(snapshot) {
                 renderLog(JSON.parse(snapshot.child("list").val()));
@@ -236,6 +193,49 @@
                     panelTitle.innerHTML = "Login";
                 });
             }
+        }
+
+        function renderLog(log) {
+            // Clear Screen
+            document.body.innerHTML = "";
+            document.body.className = "container-fluid";
+
+            // Get Unique Categories
+            log.forEach(function(entry){
+                categories[entry.category] = true;
+            });
+
+            // Page Header
+            pageHeader = document.createElement("div");
+            pageHeader.className = "page-header";
+            pageHeader.style.margin = "20px";
+            pageHeader.style.textAlign = "center";
+            document.body.appendChild(pageHeader);
+
+            h1 = document.createElement("h1");
+            h1.innerHTML = "Tactical Budgeting";
+            pageHeader.appendChild(h1);
+
+            // 2 Column View
+            splitView = document.createElement("div");
+            splitView.className = "row";
+            document.body.appendChild(splitView);
+
+            // Left View
+            leftView = document.createElement("div");
+            leftView.className = "col-md-6";
+            splitView.appendChild(leftView);
+
+            // Right View
+            rightView = document.createElement("div");
+            rightView.className = "col-md-6";
+            splitView.appendChild(rightView);
+
+            renderCurrentViewInContainerForLog(leftView, log);
+            renderTransactionFormInContainerForLog(rightView, log);
+            renderTransferFormInContainerForLog(rightView, log);
+            renderTransactionListInContainerForLog(document.body, log);
+            renderIncomingFormInContainerForLog(rightView, log);
         }
 
         function renderCurrentViewInContainerForLog(container, log) {
