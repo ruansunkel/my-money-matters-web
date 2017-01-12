@@ -233,9 +233,9 @@
 
             renderCurrentViewInContainerForLog(leftView, log);
             renderTransactionFormInContainerForLog(rightView, log);
+            renderIncomingFormInContainerForLog(rightView, log);
             renderTransferFormInContainerForLog(rightView, log);
             renderTransactionListInContainerForLog(document.body, log);
-            renderIncomingFormInContainerForLog(rightView, log);
         }
 
         function renderCurrentViewInContainerForLog(container, log) {
@@ -511,7 +511,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Transact";
+            panelTitle.innerHTML = "Pay Money";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
@@ -698,7 +698,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Transfer";
+            panelTitle.innerHTML = "Move Money";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
@@ -912,7 +912,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Incoming";
+            panelTitle.innerHTML = "Receive Money";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
