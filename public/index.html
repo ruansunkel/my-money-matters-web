@@ -108,6 +108,12 @@
             });
         }
 
+        function getIndexOfLatestApprovedEntry(log) {
+            return log.findIndex(function(entry){
+                return entry.approved;
+            });
+        }
+
         /* SCREEN RENDER FUNCTIONS */
         function renderLoginScreen() {
             document.body.innerHTML = "";
@@ -680,6 +686,10 @@
                     }
                 }
 
+                if (index == 0) {
+                    index = getIndexOfLatestApprovedEntry(log);
+                }
+
                 log.splice(index, 0, entry);
                 saveLog(log);
                 renderLog(log);
@@ -893,6 +903,10 @@
                     }
                 }
 
+                if (index == 0) {
+                    index = getIndexOfLatestApprovedEntry(log);
+                }
+
                 log.splice(index, 0, entry1);
                 log.splice(index, 0, entry2);
                 saveLog(log);
@@ -1079,6 +1093,10 @@
                     if (index < 0) {
                         index = 0;
                     }
+                }
+
+                if (index == 0) {
+                    index = getIndexOfLatestApprovedEntry(log);
                 }
 
                 log.splice(index, 0, entry);
