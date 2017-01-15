@@ -205,6 +205,7 @@
             // Clear Screen
             document.body.innerHTML = "";
             document.body.className = "container-fluid";
+            document.body.style.fontSize = "12px";
 
             // Get Unique Categories
             log.forEach(function(entry){
@@ -378,6 +379,8 @@
             th.innerHTML = "#";
             tr.appendChild(th);
             th = document.createElement("th");
+            tr.appendChild(th);
+            th = document.createElement("th");
             th.innerHTML = "Date";
             tr.appendChild(th);
             th = document.createElement("th");
@@ -401,20 +404,29 @@
             table.appendChild(tbody);
             
             log.forEach(function(entry, index){
-                // Render Transfer
-                if (entry.type === "Transfer") {
-                    renderTransferEntryInContainerForLogWithIndex(entry, tbody, log, index);
-                    return;
-                }
+                tr = document.createElement("tr");
 
-                // Render Transaction
-                var tr = document.createElement("tr");
-                var td = document.createElement("td");
-                
+                td = document.createElement("td");
                 tr.appendChild(td);
                 tbody.appendChild(tr);
-                
                 td.innerHTML = log.length - index;
+
+                td = document.createElement("td");
+                td.style.textAlign = "center";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                if (entry.type === "Transfer" && entry.amount > 0) {
+                    td.innerHTML = '<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>';
+                }
+                if (entry.type === "Transfer" && entry.amount < 0) {
+                    td.innerHTML = '<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>';
+                }
+                if (entry.type === "Transaction" && entry.amount < 0) {
+                    td.innerHTML = '<span class="glyphicon glyphicon-usd" aria-hidden="true"></span><span class="glyphicon glyphicon-minus" aria-hidden="true"></span>';
+                }
+                if (entry.type === "Transaction" && entry.amount > 0) {
+                    td.innerHTML = '<span class="glyphicon glyphicon-usd" aria-hidden="true"></span><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
+                }
                 
                 td = document.createElement("td");
                 tr.appendChild(td);
@@ -465,13 +477,18 @@
                     tr.className = "success";
                 }
 
+                if (entry.type === "Transfer") {
+                    tr.className = "warning";
+                }
+
                 if (!entry.approved) {
                     tr.className = "info";
                 }
 
                 // Approve Entry
                 td = document.createElement("td");
-                td.innerHTML = entry.approved ? "Disable" : "Approve";
+                td.style.textAlign = "center";
+                td.innerHTML = entry.approved ? '<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>';
                 td.style.cursor = "pointer";
                 tr.appendChild(td);
                 tbody.appendChild(tr);
@@ -488,7 +505,8 @@
 
                 // Remove Entry
                 td = document.createElement("td");
-                td.innerHTML = "Remove";
+                td.style.textAlign = "center";
+                td.innerHTML = '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>';
                 td.style.cursor = "pointer";
                 tr.appendChild(td);
                 tbody.appendChild(tr);
@@ -1100,113 +1118,6 @@
                 }
 
                 log.splice(index, 0, entry);
-                saveLog(log);
-                renderLog(log);
-            }
-        }
-
-        /* ENTRY RENDER FUNCTIONS */
-        function renderTransferEntryInContainerForLogWithIndex(entry, container, log, index) {
-            if (entry.amount > 0) {
-                return;
-            }
-
-            var tr = document.createElement("tr");
-            var td = document.createElement("td");
-
-            tr.appendChild(td);
-            container.appendChild(tr);
-            
-            td.innerHTML = log.length - index;
-            
-            td = document.createElement("td");
-            tr.appendChild(td);
-            container.appendChild(tr);
-            td.innerHTML = entry.date;
-
-            td = document.createElement("td");
-            td.setAttribute("colspan", "2");
-            tr.appendChild(td);
-            container.appendChild(tr);
-            td.innerHTML = formatForDisplay(Math.abs(entry.amount)) + (entry.approved ? " got " : " will get ") + "moved from " + entry.category + " to " + log[index-1].category;
-
-            td = document.createElement("td");
-            tr.appendChild(td);
-            container.appendChild(tr);
-            td.innerHTML = entry.description;
-
-            balance = 0;
-            for (i = log.length - 1; i >= index; i--) {
-                if (entry.category === log[i].category) {
-                    balance += log[i].amount;
-                }
-            }
-            balance = Math.round(balance * 100) / 100;
-            
-            previous = (balance - entry.amount);
-            previous = Math.round(previous * 100) / 100;
-            
-            td = document.createElement("td");
-            tr.appendChild(td);
-            container.appendChild(tr);
-            td.innerHTML = entry.category + ": " + formatForDisplay(balance);
-
-            balance = 0;
-            for (i = log.length - 1; i >= index; i--) {
-                if (log[index - 1].category === log[i].category) {
-                    balance += log[i].amount;
-                }
-            }
-            balance = Math.round(balance * 100) / 100;
-            
-            next = (balance + log[index - 1].amount);
-            next = Math.round(next * 100) / 100;
-
-            td.innerHTML += ", " + log[index-1].category + ": " + formatForDisplay(next);
-
-            if (!entry.approved) {
-                tr.className = "info";
-            }
-
-            if (entry.approved) {
-                tr.className = "warning";
-            }
-
-            // Approve Entry
-            td = document.createElement("td");
-            td.innerHTML = entry.approved ? "Disable" : "Approve";
-            td.style.cursor = "pointer";
-            tr.appendChild(td);
-            container.appendChild(tr);
-
-            td.onclick = function() {
-                entry = log[index];
-                entry.approved = !entry.approved;
-                log.splice(index, 1, entry);
-
-                entry = log[index - 1];
-                entry.approved = !entry.approved;
-                log.splice(index - 1, 1, entry);
-
-                saveLog(log);
-                renderLog(log);
-            }
-
-            // Remove Entry
-            td = document.createElement("td");
-            td.innerHTML = "Remove";
-            td.style.cursor = "pointer";
-            tr.appendChild(td);
-            container.appendChild(tr);
-
-            td.onclick = function() {
-                if (!window.confirm("Are you sure you want to remove this entry?")) {
-                    return;
-                }
-
-                log.splice(index, 1);
-                log.splice(index - 1, 1);
-
                 saveLog(log);
                 renderLog(log);
             }
