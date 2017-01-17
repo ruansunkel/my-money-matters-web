@@ -519,7 +519,16 @@
                         return;
                     }
 
+                    entry = log[index];
                     log.splice(index, 1);
+
+                    if (entry.type === "Transfer" && entry.amount < 0) {
+                        log.splice(index - 1, 1);
+                    }
+                    if (entry.type === "Transfer" && entry.amount > 0) {
+                        log.splice(index, 1);
+                    }
+
                     saveLog(log);
                     renderLog(log);
                 }
