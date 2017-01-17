@@ -493,9 +493,14 @@
 
                 td.onclick = function() {
                     entry = log[index];
-                    entry.approved = !entry.approved;
+                    log[index].approved = !entry.approved;
 
-                    log.splice(index, 1, entry);
+                    if (entry.type === "Transfer" && entry.amount < 0) {
+                        log[index - 1].approved = !log[index - 1].approved;
+                    }
+                    if (entry.type === "Transfer" && entry.amount > 0) {
+                        log[index + 1].approved = !log[index + 1].approved;
+                    }
 
                     saveLog(log);
                     renderLog(log);
