@@ -1131,6 +1131,10 @@
                     if (index < 0) {
                         index = 0;
                     }
+
+                    if (log[index].type === "Transfer" && log[index].amount < 0) {
+                        index -= 1;
+                    }
                 }
 
                 if (index == 0) {
