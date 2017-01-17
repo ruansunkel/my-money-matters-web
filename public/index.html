@@ -395,7 +395,7 @@
             tr.appendChild(th);
             th = document.createElement("th");
             th.innerHTML = "Actions";
-            th.setAttribute("colspan", "2");
+            th.setAttribute("colspan", "4");
             tr.appendChild(th);
             
             var tbody = document.createElement("tbody");
@@ -527,6 +527,58 @@
                     }
                     if (entry.type === "Transfer" && entry.amount > 0) {
                         log.splice(index, 1);
+                    }
+
+                    saveLog(log);
+                    renderLog(log);
+                }
+
+                // Move up
+                td = document.createElement("td");
+                td.style.textAlign = "center";
+                td.innerHTML = '<span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>';
+                td.style.cursor = "pointer";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                td.onclick = function() {
+                    if (index - 1 < 0) {
+                        return;
+                    }
+
+                    entry = log[index];
+
+                    if (entry.type === "Transfer" && entry.amount < 0 && index - 2 < 0) {
+                        return;
+                    }
+
+                    removeoffset = 1;
+
+                    if (log[index - 1].type === "Transfer" && log[index - 1].amount < 0) {
+                        removeoffset = 2;
+                    }
+
+                    if (log[index - 1].type === "Transfer" && log[index - 1].amount > 0) {
+                        removeoffset = 2;
+                    }
+
+                    if (log[index - 1].type === "Transfer" && log[index - 1].amount > 0 && log[index - 2].type === "Transfer" && log[index - 2].amount < 0) {
+                        removeoffset = 3;
+                    }
+
+                    log.splice(index, 1);
+                    log.splice(index - removeoffset, 0, entry);
+
+                    if (entry.type === "Transfer" && entry.amount > 0) {
+                        entry2 = log[index + 1];
+                        log.splice(index + 1, 1);
+                        log.splice(index + 1 - removeoffset, 0, entry2);
+                    }
+
+                    if (entry.type === "Transfer" && entry.amount < 0) {
+                        entry2 = log[index];
+                        log.splice(index, 1);
+                        log.splice(index - removeoffset, 0, entry2);
                     }
 
                     saveLog(log);
