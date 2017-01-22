@@ -257,6 +257,7 @@
             splitView.appendChild(rightView);
 
             renderCurrentViewInContainerForLog(leftView, log);
+            renderMonthResultViewInContainerForLogWithDate(leftView, log, "2017-01");
             renderTransactionFormInContainerForLog(rightView, log);
             renderIncomingFormInContainerForLog(rightView, log);
             renderTransferFormInContainerForLog(rightView, log);
@@ -1299,7 +1300,7 @@
             tr.appendChild(th);
 
             th = document.createElement("th");
-            th.innerHTML = "Available";
+            th.innerHTML = "Left Over";
             tr.appendChild(th);
             
             tbody = document.createElement("tbody");
@@ -1360,7 +1361,7 @@
             td = document.createElement("td");
             tr.appendChild(td);
             b = document.createElement("b");
-            b.innerHTML = "BUDGET TOTAL";
+            b.innerHTML = "INCOMING TOTAL";
             td.appendChild(b);
             
             td = document.createElement("td");
