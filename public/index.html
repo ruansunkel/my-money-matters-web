@@ -1360,18 +1360,6 @@
                 tr.appendChild(td);
                 td.innerHTML = formatForDisplay(calculateLogSum(getIncomingEntriesForCategoryInLog(key, monthlog)));
 
-                td.innerHTML = formatForDisplay(monthlog.reduce(function(accumulator, entry) {
-                    if (entry.type === "Transaction" && entry.amount < 0) {
-                        return accumulator + 0;
-                    }
-                    
-                    if (entry.category === key) {
-                        return accumulator + entry.amount;
-                    }
-
-                    return accumulator + 0;
-                }, 0));
-
                 td = document.createElement("td");
                 tr.appendChild(td);
                 td.innerHTML = formatForDisplay(calculateLogSum(getEntriesForCategoryInLog(key, log)));
@@ -1394,7 +1382,7 @@
             td.innerHTML = "<b>" + formatForDisplay(total) + "</br>";
             tr.appendChild(td);
             
-            tbody.appendChild(tr);
+            //tbody.appendChild(tr);
         }
 
         renderLoginScreen();
