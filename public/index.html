@@ -461,9 +461,25 @@
             
             var tbody = document.createElement("tbody");
             table.appendChild(tbody);
+
+            currentdate = "";
             
             log.forEach(function(entry, index){
                 tr = document.createElement("tr");
+
+                if (currentdate.search(entry.date.split("-").slice(0, 2).join("-")) === -1) {
+                    currentdate = entry.date;
+
+                    td = document.createElement("td");
+                    td.setAttribute("colspan", "11");
+                    td.style.textAlign = "center";
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+
+                    td.innerHTML = currentdate.split("-").slice(0, 2).join("-");
+
+                    tr = document.createElement("tr");
+                }
 
                 td = document.createElement("td");
                 tr.appendChild(td);
@@ -1344,11 +1360,21 @@
                 tr.appendChild(td);
                 td.innerHTML = formatForDisplay(calculateLogSum(getIncomingEntriesForCategoryInLog(key, monthlog)));
 
+                td.innerHTML = formatForDisplay(monthlog.reduce(function(accumulator, entry) {
+                    if (entry.type === "Transaction" && entry.amount < 0) {
+                        return accumulator + 0;
+                    }
+                    
+                    if (entry.category === key) {
+                        return accumulator + entry.amount;
+                    }
+
+                    return accumulator + 0;
+                }, 0));
+
                 td = document.createElement("td");
                 tr.appendChild(td);
-                td.innerHTML = formatForDisplay(calculateLogSum(getIncomingEntriesForCategoryInLog(key, log))
-                    + calculateLogSum(getOutgoingTransfersForCategoryInLog(key, log))
-                    + calculateLogSum(getOutgoingTransactionsForCategoryInLog(key, log)));
+                td.innerHTML = formatForDisplay(calculateLogSum(getEntriesForCategoryInLog(key, log)));
 
                 if (initial + spent > 0) {
                     tbody.appendChild(tr);
