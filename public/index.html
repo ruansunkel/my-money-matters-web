@@ -64,6 +64,12 @@
             });
         }
 
+        function getEntriesForCategoryInLog(category, log) {
+            return log.filter(function(entry){
+                return entry.category === category;
+            });
+        }
+
         function calculateLogSum(log) {
             return log.reduce(function(accumulator, entry) {
                 return accumulator + entry.amount;
@@ -87,6 +93,18 @@
         function getOutgoingTransactionsForCategoryInLog(category, log) {
             return log.filter(function(entry) {
                 return entry.category === category && entry.amount < 0 && entry.type === "Transaction";
+            });
+        }
+
+        function getIncomingEntriesForCategoryInLog(category, log) {
+            return log.filter(function(entry) {
+                return entry.category === category && entry.amount > 0;
+            });
+        }
+
+        function getOutgoingTransfersForCategoryInLog(category, log) {
+            return log.filter(function(entry) {
+                return entry.category === category && entry.amount < 0 && entry.type === "Transfer";
             });
         }
 
@@ -243,6 +261,48 @@
             renderIncomingFormInContainerForLog(rightView, log);
             renderTransferFormInContainerForLog(rightView, log);
             renderTransactionListInContainerForLog(document.body, log);
+
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            document.body.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = "Budget Allocation Overview";
+            panelHeading.appendChild(panelTitle);
+
+            panelBodyParent = document.createElement("div");
+            panelBodyParent.className = "panel-body";
+            panel.appendChild(panelBodyParent);
+
+            for (i = 0; i < 12; i += 3) {
+                splitView = document.createElement("div");
+                splitView.className = "row";
+                panelBodyParent.appendChild(splitView);
+
+                // 1st View
+                view1 = document.createElement("div");
+                view1.className = "col-md-4";
+                splitView.appendChild(view1);
+
+                // 2nd View
+                view2 = document.createElement("div");
+                view2.className = "col-md-4";
+                splitView.appendChild(view2);
+
+                // 3rd View
+                view3 = document.createElement("div");
+                view3.className = "col-md-4";
+                splitView.appendChild(view3);
+
+                renderMonthResultViewInContainerForLogWithDate(view1, log, "2017-" + "0".repeat(2 - (i+1).toString().length) + "" + (i+1));
+                renderMonthResultViewInContainerForLogWithDate(view2, log, "2017-" + "0".repeat(2 - (i+2).toString().length) + "" + (i+2));
+                renderMonthResultViewInContainerForLogWithDate(view3, log, "2017-" + "0".repeat(2 - (i+3).toString().length) + "" + (i+3));
+            }
         }
 
         function renderCurrentViewInContainerForLog(container, log) {
@@ -1197,6 +1257,117 @@
                 saveLog(log);
                 renderLog(log);
             }
+        }
+
+        function renderMonthResultViewInContainerForLogWithDate(container, log, date) {
+            // CURRENT VIEW
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            container.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = date + " - End of Month";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+            
+            // Current View
+            table = document.createElement("table");
+            table.className = "table table-striped table-bordered";
+            panelBody.appendChild(table);
+            
+            thead = document.createElement("thead");
+            table.appendChild(thead);
+            
+            tr = document.createElement("tr");
+            thead.appendChild(tr);
+            
+            th = document.createElement("th");
+            th.innerHTML = "Category";
+            th.style.width = "50%";
+            tr.appendChild(th);
+            
+            th = document.createElement("th");
+            th.innerHTML = "Budgeted";
+            tr.appendChild(th);
+
+            th = document.createElement("th");
+            th.innerHTML = "Available";
+            tr.appendChild(th);
+            
+            tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+
+            log = log.slice(log.findIndex(function(entry){
+                return entry.date.search(date) != -1;
+            }), log.length);
+
+            monthlog = log.filter(function(entry){
+                return entry.date.search(date) != -1;
+            });
+
+            monthcategories = {};
+            monthlog.forEach(function(entry){
+                monthcategories[entry.category] = true;
+            });
+        
+            total = 0;
+
+            Object.keys(monthcategories).sort().forEach(function(key){
+                tr = document.createElement("tr");
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                td.innerHTML = key;
+                
+                var initial = log.reduce(function(accumulator, entry){
+                    return accumulator
+                    + ((entry.category === key && entry.type === "Transfer") ? entry.amount : 0)
+                    + ((entry.category === key && entry.type === "Transaction" && entry.amount > 0) ? entry.amount : 0);
+                }, 0);
+                initial = Math.round(initial * 100) / 100;
+                
+                var spent = log.reduce(function(accumulator, entry){
+                    return accumulator + ((entry.category === key && entry.type === "Transaction" && entry.amount < 0) ? entry.amount : 0);
+                }, 0);
+                spent = Math.round(spent * 100) / 100;
+                
+                td = document.createElement("td");
+                tr.appendChild(td);
+                td.innerHTML = formatForDisplay(calculateLogSum(getIncomingEntriesForCategoryInLog(key, monthlog)));
+
+                td = document.createElement("td");
+                tr.appendChild(td);
+                td.innerHTML = formatForDisplay(calculateLogSum(getIncomingEntriesForCategoryInLog(key, log))
+                    + calculateLogSum(getOutgoingTransfersForCategoryInLog(key, log))
+                    + calculateLogSum(getOutgoingTransactionsForCategoryInLog(key, log)));
+
+                if (initial + spent > 0) {
+                    tbody.appendChild(tr);
+                    total += calculateLogSum(getIncomingEntriesForCategoryInLog(key, monthlog));
+                }
+            });
+
+            // Available Balance
+            tr = document.createElement("tr");
+            td = document.createElement("td");
+            tr.appendChild(td);
+            b = document.createElement("b");
+            b.innerHTML = "BUDGET TOTAL";
+            td.appendChild(b);
+            
+            td = document.createElement("td");
+            td.innerHTML = "<b>" + formatForDisplay(total) + "</br>";
+            tr.appendChild(td);
+            
+            tbody.appendChild(tr);
         }
 
         renderLoginScreen();
