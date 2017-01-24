@@ -510,10 +510,12 @@
                     td = document.createElement("td");
                     td.setAttribute("colspan", "11");
                     td.style.textAlign = "center";
+                    td.style.fontSize = "20px";
                     tr.appendChild(td);
                     tbody.appendChild(tr);
 
-                    td.innerHTML = currentdate.split("-").slice(0, 2).join("-");
+                    td.innerHTML = "<b>" + currentdate.split("-").slice(0, 2).join("-") + "</b>";
+                    td.innerHTML = "<b>" + months[parseInt(currentdate.split("-")[1])] + " " + currentdate.split("-")[0] + "</b>";
 
                     tr = document.createElement("tr");
                 }
