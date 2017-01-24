@@ -117,15 +117,15 @@
         }
 
         /* ATOMIC Level 2 */
-        function getApprovedEntriesForCategoryInLog(category, log) {
+        function getApprovedEntriesWithCategoryInLog(category, log) {
             return getApprovedEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
-        function getIncomingEntriesForCategoryInLog(category, log) {
+        function getIncomingEntriesWithCategoryInLog(category, log) {
             return getIncomingEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
-        function getOutgoingEntriesForCategoryInLog(category, log) {
+        function getOutgoingEntriesWithCategoryInLog(category, log) {
             return getOutgoingEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
@@ -138,20 +138,20 @@
         }
 
         /* ATOMIC Level 3 */
-        function getOutgoingTransactionsForCategoryInLog(category, log) {
-            return getTransactionEntriesInLog(getOutgoingEntriesForCategoryInLog(category, log));
+        function getOutgoingTransactionsWithCategoryInLog(category, log) {
+            return getTransactionEntriesInLog(getOutgoingEntriesWithCategoryInLog(category, log));
         }
 
-        function getOutgoingTransfersForCategoryInLog(category, log) {
-            return getTransferEntriesInLog(getOutgoingEntriesForCategoryInLog(category, log));
+        function getOutgoingTransfersWithCategoryInLog(category, log) {
+            return getTransferEntriesInLog(getOutgoingEntriesWithCategoryInLog(category, log));
         }
 
         function calculateAvailaleBalanceForCategoryInLog(category, log) {
-            return calculateLogSum(getApprovedEntriesForCategoryInLog(category, log));
+            return calculateLogSum(getApprovedEntriesWithCategoryInLog(category, log));
         }
 
-        function calculateIncomingTotalForCategoryInLog(category, log) {
-            return calculateLogSum(getIncomingEntriesForCategoryInLog(category, log));
+        function calculateIncomingTotalWithCategoryInLog(category, log) {
+            return calculateLogSum(getIncomingEntriesWithCategoryInLog(category, log));
         }
 
         function getMostRecentPositiveTransferIndexForCategoryInLog(category, log) {
@@ -1369,7 +1369,7 @@
                 tr.appendChild(td);
                 
                 td = document.createElement("td");
-                td.innerHTML = formatForDisplay(calculateIncomingTotalForCategoryInLog(key, monthlog));
+                td.innerHTML = formatForDisplay(calculateIncomingTotalWithCategoryInLog(key, monthlog));
                 tr.appendChild(td);
 
                 td = document.createElement("td");
