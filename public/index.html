@@ -64,7 +64,7 @@
         /* LOG API FUNCTIONS - In order of Atomicity */
         
         /* ATOMIC Level 1 */
-        function getEntriesForCategoryInLog(category, log) {
+        function getEntriesWithCategoryInLog(category, log) {
             return log.filter(function(entry) {
                 return entry.category === category;
             });
@@ -118,15 +118,15 @@
 
         /* ATOMIC Level 2 */
         function getApprovedEntriesForCategoryInLog(category, log) {
-            return getApprovedEntriesInLog(getEntriesForCategoryInLog(category, log));
+            return getApprovedEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
         function getIncomingEntriesForCategoryInLog(category, log) {
-            return getIncomingEntriesInLog(getEntriesForCategoryInLog(category, log));
+            return getIncomingEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
         function getOutgoingEntriesForCategoryInLog(category, log) {
-            return getOutgoingEntriesInLog(getEntriesForCategoryInLog(category, log));
+            return getOutgoingEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
         function calculateAvailableBalanceForLog(log) {
@@ -134,7 +134,7 @@
         }
 
         function calculateTotalBalanceForCategoryInLog(category, log) {
-            return calculateLogSum(getEntriesForCategoryInLog(category, log));
+            return calculateLogSum(getEntriesWithCategoryInLog(category, log));
         }
 
         /* ATOMIC Level 3 */
@@ -160,7 +160,7 @@
             });
         }
 
-        /* LOG ADMINISTRATION FUNCTIONS */
+        /* Not Categorized Yet */
         function saveLog(log) {
             list = [];
             
