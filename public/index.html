@@ -28,11 +28,14 @@
     <script type="text/javascript">
         /* 
             LOG EXAMPLE
+
             [
-                {date: "2017-01-01", category: "Daily Living", description: "Weekly Groceries", amount: -200, type: "Transaction", approved: true},
-                {date: "2017-01-01", category: "Daily Living", description: "Budget for Groceries", amount: 500, type: "Transfer", approved: true},
-                {date: "2017-01-01", category: "Available to Budget", description: "Budget for Groceries", amount: -500, type: "Transfer", approved: true}
+                { date : "2017-01-01",  category : "Daily Living",        description : "Weekly Groceries",     amount : -200, type : "Transaction", approved : true },
+                { date : "2017-01-01",  category : "Daily Living",        description : "Budget for Groceries", amount :  500, type : "Transfer",    approved : true },
+                { date : "2017-01-01",  category : "Available to Budget", description : "Budget for Groceries", amount : -500, type : "Transfer",    approved : true }
             ]
+
+            [ { date : "[ISO 8608 Date]", category : "[String]", description : "[String]", amount : [Decimal], type : "[Transaction|Transfer]", approved : [true|false] } ]
         */
 
         /* FIREBASE INITIALIZATION */
@@ -49,6 +52,7 @@
         categories = {};
 
         /* FORMATTING FUNCTIONS */
+
         function roundToTwoDecimalPlaces(number) {
             return Math.round(number * 100) / 100;
         }
@@ -57,16 +61,42 @@
             return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
         }
 
-        /* LOG FUNCTIONS */
-        function getApprovedEntriesForCategoryInLog(category, log) {
-            return log.filter(function(entry){
-                return entry.category === category && entry.approved;
+        /* LOG API FUNCTIONS - In order of Atomicity */
+        
+        /* ATOMIC Level 1 */
+        function getEntriesForCategoryInLog(category, log) {
+            return log.filter(function(entry) {
+                return entry.category === category;
             });
         }
 
-        function getEntriesForCategoryInLog(category, log) {
-            return log.filter(function(entry){
-                return entry.category === category;
+        function getApprovedEntriesInLog(log) {
+            return log.filter(function(entry) {
+                return entry.approved;
+            });
+        }
+
+        function getTransactionEntriesInLog(log) {
+            return log.filter(function(entry) {
+                return entry.type === "Transaction";
+            });
+        }
+
+        function getTransferEntriesInLog(log) {
+            return log.filter(function(entry) {
+                return entry.type === "Transfer";
+            });
+        }
+
+        function getIncomingEntriesInLog(log) {
+            return log.filter(function(entry) {
+                return entry.amount > 0;
+            });
+        }
+
+        function getOutgoingEntriesInLog(log) {
+            return log.filter(function(entry) {
+                return entry.amount < 0;
             });
         }
 
@@ -76,8 +106,52 @@
             }, 0);
         }
 
+        function getIndexOfLatestApprovedEntry(log) {
+            return log.findIndex(function(entry) {
+                return entry.approved;
+            });
+        }
+
+        function getLogUpToIndex(log, index) {
+            return log.slice(0, index);
+        }
+
+        /* ATOMIC Level 2 */
+        function getApprovedEntriesForCategoryInLog(category, log) {
+            return getApprovedEntriesInLog(getEntriesForCategoryInLog(category, log));
+        }
+
+        function getIncomingEntriesForCategoryInLog(category, log) {
+            return getIncomingEntriesInLog(getEntriesForCategoryInLog(category, log));
+        }
+
+        function getOutgoingEntriesForCategoryInLog(category, log) {
+            return getOutgoingEntriesInLog(getEntriesForCategoryInLog(category, log));
+        }
+
+        function calculateAvailableBalanceForLog(log) {
+            return calculateLogSum(getApprovedEntriesInLog(log));
+        }
+
+        function calculateTotalBalanceForCategoryInLog(category, log) {
+            return calculateLogSum(getEntriesForCategoryInLog(category, log));
+        }
+
+        /* ATOMIC Level 3 */
+        function getOutgoingTransactionsForCategoryInLog(category, log) {
+            return getTransactionEntriesInLog(getOutgoingEntriesForCategoryInLog(category, log));
+        }
+
+        function getOutgoingTransfersForCategoryInLog(category, log) {
+            return getTransferEntriesInLog(getOutgoingEntriesForCategoryInLog(category, log));
+        }
+
         function calculateAvailaleBalanceForCategoryInLog(category, log) {
             return calculateLogSum(getApprovedEntriesForCategoryInLog(category, log));
+        }
+
+        function calculateIncomingTotalForCategoryInLog(category, log) {
+            return calculateLogSum(getIncomingEntriesForCategoryInLog(category, log));
         }
 
         function getMostRecentPositiveTransferIndexForCategoryInLog(category, log) {
@@ -86,28 +160,7 @@
             });
         }
 
-        function getLogUpToIndex(log, index) {
-            return log.slice(0, index);
-        }
-
-        function getOutgoingTransactionsForCategoryInLog(category, log) {
-            return log.filter(function(entry) {
-                return entry.category === category && entry.amount < 0 && entry.type === "Transaction";
-            });
-        }
-
-        function getIncomingEntriesForCategoryInLog(category, log) {
-            return log.filter(function(entry) {
-                return entry.category === category && entry.amount > 0;
-            });
-        }
-
-        function getOutgoingTransfersForCategoryInLog(category, log) {
-            return log.filter(function(entry) {
-                return entry.category === category && entry.amount < 0 && entry.type === "Transfer";
-            });
-        }
-
+        /* LOG ADMINISTRATION FUNCTIONS */
         function saveLog(log) {
             list = [];
             
@@ -123,12 +176,6 @@
         function retrieveAndRenderLog(user) {
             firebase.database().ref(user).once("value").then(function(snapshot) {
                 renderLog(JSON.parse(snapshot.child("list").val()));
-            });
-        }
-
-        function getIndexOfLatestApprovedEntry(log) {
-            return log.findIndex(function(entry){
-                return entry.approved;
             });
         }
 
@@ -347,61 +394,36 @@
             tbody = document.createElement("tbody");
             table.appendChild(tbody);
         
+            // Category List
             Object.keys(categories).sort().forEach(function(key){
                 tr = document.createElement("tr");
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = key;
-                
-                var initial = log.reduce(function(accumulator, entry){
-                    return accumulator
-                    + ((entry.category === key && entry.type === "Transfer" && entry.approved) ? entry.amount : 0)
-                    + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount > 0) ? entry.amount : 0);
-                }, 0);
-                initial = Math.round(initial * 100) / 100;
-                
-                var spent = log.reduce(function(accumulator, entry){
-                    return accumulator + ((entry.category === key && entry.type === "Transaction" && entry.approved && entry.amount < 0) ? entry.amount : 0);
-                }, 0);
-                spent = Math.round(spent * 100) / 100;
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = formatForDisplay(calculateAvailaleBalanceForCategoryInLog(key, log));
-                
-                if (initial === initial + spent) {
-                    tr.className = "success";
-                }
-                if (initial + spent === 0) {
-                    tr.className = "danger";
-                }
 
-                if (initial + spent > 0) {
-                    tbody.appendChild(tr);
+                availableBalance = calculateAvailaleBalanceForCategoryInLog(key, log);
+
+                if (availableBalance <= 0) {
+                    return;
                 }
+                
+                td = document.createElement("td");
+                td.innerHTML = key;
+                tr.appendChild(td);
+                
+                td = document.createElement("td");
+                td.innerHTML = formatForDisplay(availableBalance);
+                tr.appendChild(td);
+
+                tbody.appendChild(tr);
             });
             
             // Available Balance
             tr = document.createElement("tr");
+
             td = document.createElement("td");
+            td.innerHTML = "<b>TOTAL</b>";
             tr.appendChild(td);
-            b = document.createElement("b");
-            b.innerHTML = "TOTAL";
-            td.appendChild(b);
-            
-            var initial = log.reduce(function(accumulator, entry){
-                return accumulator + ((entry.type === "Transfer" && entry.approved) ? entry.amount : 0);
-            }, 0);
-            initial = Math.round(initial * 100) / 100;
-            
-            var spent = log.reduce(function(accumulator, entry){
-                return accumulator + ((entry.type === "Transaction" && entry.approved) ? entry.amount : 0);
-            }, 0);
-            spent = Math.round(spent * 100) / 100;
             
             td = document.createElement("td");
-            td.innerHTML = "<b>" + formatForDisplay(initial + spent) + "</br>";
+            td.innerHTML = "<b>" + formatForDisplay(calculateAvailableBalanceForLog(log)) + "</br>";
             tr.appendChild(td);
             
             tbody.appendChild(tr);
@@ -1334,55 +1356,28 @@
             monthlog.forEach(function(entry){
                 monthcategories[entry.category] = true;
             });
-        
-            total = 0;
 
             Object.keys(monthcategories).sort().forEach(function(key){
                 tr = document.createElement("tr");
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = key;
-                
-                var initial = log.reduce(function(accumulator, entry){
-                    return accumulator
-                    + ((entry.category === key && entry.type === "Transfer") ? entry.amount : 0)
-                    + ((entry.category === key && entry.type === "Transaction" && entry.amount > 0) ? entry.amount : 0);
-                }, 0);
-                initial = Math.round(initial * 100) / 100;
-                
-                var spent = log.reduce(function(accumulator, entry){
-                    return accumulator + ((entry.category === key && entry.type === "Transaction" && entry.amount < 0) ? entry.amount : 0);
-                }, 0);
-                spent = Math.round(spent * 100) / 100;
-                
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = formatForDisplay(calculateLogSum(getIncomingEntriesForCategoryInLog(key, monthlog)));
 
-                td = document.createElement("td");
-                tr.appendChild(td);
-                td.innerHTML = formatForDisplay(calculateLogSum(getEntriesForCategoryInLog(key, log)));
-
-                if (initial + spent > 0) {
-                    tbody.appendChild(tr);
-                    total += calculateLogSum(getIncomingEntriesForCategoryInLog(key, monthlog));
+                if (calculateTotalBalanceForCategoryInLog(key, log) <= 0) {
+                    return;
                 }
-            });
+                
+                td = document.createElement("td");
+                td.innerHTML = key;
+                tr.appendChild(td);
+                
+                td = document.createElement("td");
+                td.innerHTML = formatForDisplay(calculateIncomingTotalForCategoryInLog(key, monthlog));
+                tr.appendChild(td);
 
-            // Available Balance
-            tr = document.createElement("tr");
-            td = document.createElement("td");
-            tr.appendChild(td);
-            b = document.createElement("b");
-            b.innerHTML = "INCOMING TOTAL";
-            td.appendChild(b);
-            
-            td = document.createElement("td");
-            td.innerHTML = "<b>" + formatForDisplay(total) + "</br>";
-            tr.appendChild(td);
-            
-            //tbody.appendChild(tr);
+                td = document.createElement("td");
+                tr.appendChild(td);
+                td.innerHTML = formatForDisplay(calculateTotalBalanceForCategoryInLog(key, log));
+
+                tbody.appendChild(tr);
+            });
         }
 
         renderLoginScreen();
