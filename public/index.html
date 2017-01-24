@@ -61,6 +61,22 @@
             return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
         }
 
+        months = {
+            "1": "January",
+            "2": "February",
+            "3": "March",
+            "4": "April",
+            "5": "May",
+            "6": "June",
+            "7": "July",
+            "8": "August",
+            "9": "September",
+            "10": "October",
+            "11": "November",
+            "12": "December",
+            "13": "January"
+        };
+
         /* LOG API FUNCTIONS - In order of Atomicity */
         
         /* ATOMIC Level 1 */
@@ -304,7 +320,7 @@
             splitView.appendChild(rightView);
 
             renderCurrentViewInContainerForLog(leftView, log);
-            renderMonthResultViewInContainerForLogWithDate(leftView, log, "2017-01");
+            renderMonthResultViewInContainerForLogWithDate(leftView, log, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1));
             renderTransactionFormInContainerForLog(rightView, log);
             renderIncomingFormInContainerForLog(rightView, log);
             renderTransferFormInContainerForLog(rightView, log);
@@ -1310,7 +1326,8 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = date + " - End of Month";
+            panelTitle.innerHTML = [date.split("-")[0], "0".repeat(2 - (parseInt(date.split("-")[1])+1).toString().length) + "" + (parseInt(date.split("-")[1])+1)].join("-") + " Projection";
+            panelTitle.innerHTML = months[parseInt(date.split("-")[1]) + 1] + " " + date.split("-")[0] + " Projection";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
@@ -1333,12 +1350,12 @@
             th.style.width = "50%";
             tr.appendChild(th);
             
-            th = document.createElement("th");
-            th.innerHTML = "Budgeted";
-            tr.appendChild(th);
+            // th = document.createElement("th");
+            // th.innerHTML = "Budgeted";
+            // tr.appendChild(th);
 
             th = document.createElement("th");
-            th.innerHTML = "Left Over";
+            th.innerHTML = "TOTAL";
             tr.appendChild(th);
             
             tbody = document.createElement("tbody");
@@ -1357,7 +1374,7 @@
                 monthcategories[entry.category] = true;
             });
 
-            Object.keys(monthcategories).sort().forEach(function(key){
+            Object.keys(categories).sort().forEach(function(key){
                 tr = document.createElement("tr");
 
                 if (calculateTotalBalanceForCategoryInLog(key, log) <= 0) {
@@ -1368,9 +1385,9 @@
                 td.innerHTML = key;
                 tr.appendChild(td);
                 
-                td = document.createElement("td");
-                td.innerHTML = formatForDisplay(calculateIncomingTotalWithCategoryInLog(key, monthlog));
-                tr.appendChild(td);
+                // td = document.createElement("td");
+                // td.innerHTML = formatForDisplay(calculateIncomingTotalWithCategoryInLog(key, monthlog));
+                // tr.appendChild(td);
 
                 td = document.createElement("td");
                 tr.appendChild(td);
@@ -1378,6 +1395,19 @@
 
                 tbody.appendChild(tr);
             });
+
+            // Available Balance
+            tr = document.createElement("tr");
+
+            td = document.createElement("td");
+            td.innerHTML = "<b>TOTAL</b>";
+            tr.appendChild(td);
+            
+            td = document.createElement("td");
+            td.innerHTML = "<b>" + formatForDisplay(calculateLogSum(log)) + "</br>";
+            tr.appendChild(td);
+            
+            tbody.appendChild(tr);
         }
 
         renderLoginScreen();
