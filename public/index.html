@@ -381,7 +381,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Current View";
+            panelTitle.innerHTML = months[parseInt(new Date(Date.now()).getMonth() + 1)] + " " + new Date(Date.now()).getFullYear() + " - Current State";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
@@ -1327,7 +1327,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = months[parseInt(date.split("-")[1]) + 1] + " " + ((parseInt(date.split("-")[1]) + 1) == 13 ? (parseInt(date.split("-")[0]) + 1) : date.split("-")[0]) + " Projection";
+            panelTitle.innerHTML = months[parseInt(date.split("-")[1]) + 1] + " " + ((parseInt(date.split("-")[1]) + 1) == 13 ? (parseInt(date.split("-")[0]) + 1) : date.split("-")[0]) + " - Projection";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
