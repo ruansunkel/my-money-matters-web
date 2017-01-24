@@ -336,7 +336,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = "Budget Overview based on Transaction List";
+            panelTitle.innerHTML = new Date(Date.now()).getFullYear() + " Projections";
             panelHeading.appendChild(panelTitle);
 
             panelBodyParent = document.createElement("div");
@@ -1325,8 +1325,7 @@
 
             panelTitle = document.createElement("h3");
             panelTitle.className = "panel-title";
-            panelTitle.innerHTML = [date.split("-")[0], "0".repeat(2 - (parseInt(date.split("-")[1])+1).toString().length) + "" + (parseInt(date.split("-")[1])+1)].join("-") + " Projection";
-            panelTitle.innerHTML = months[parseInt(date.split("-")[1]) + 1] + " " + date.split("-")[0] + " Projection";
+            panelTitle.innerHTML = months[parseInt(date.split("-")[1]) + 1] + " " + ((parseInt(date.split("-")[1]) + 1) == 13 ? (parseInt(date.split("-")[0]) + 1) : date.split("-")[0]) + " Projection";
             panelHeading.appendChild(panelTitle);
 
             panelBody = document.createElement("div");
@@ -1348,10 +1347,6 @@
             th.innerHTML = "Category";
             tr.appendChild(th);
             
-            // th = document.createElement("th");
-            // th.innerHTML = "Budgeted";
-            // tr.appendChild(th);
-
             th = document.createElement("th");
             th.innerHTML = "TOTAL";
             tr.appendChild(th);
@@ -1359,17 +1354,12 @@
             tbody = document.createElement("tbody");
             table.appendChild(tbody);
 
-            log = log.slice(log.findIndex(function(entry){
+            log = log.slice(Math.max(0, log.findIndex(function(entry){
                 return entry.date.search(date) != -1;
-            }), log.length);
+            })), log.length);
 
             monthlog = log.filter(function(entry){
                 return entry.date.search(date) != -1;
-            });
-
-            monthcategories = {};
-            monthlog.forEach(function(entry){
-                monthcategories[entry.category] = true;
             });
 
             Object.keys(categories).sort().forEach(function(key){
@@ -1382,10 +1372,6 @@
                 td = document.createElement("td");
                 td.innerHTML = key;
                 tr.appendChild(td);
-                
-                // td = document.createElement("td");
-                // td.innerHTML = formatForDisplay(calculateIncomingTotalWithCategoryInLog(key, monthlog));
-                // tr.appendChild(td);
 
                 td = document.createElement("td");
                 tr.appendChild(td);
