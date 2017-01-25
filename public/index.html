@@ -116,6 +116,12 @@
             });
         }
 
+        function getEntriesForMonthInLog(month, log) {
+            return log.filter(function(entry) {
+                return entry.date.findIndex(month) != -1
+            });
+        }
+
         function calculateLogSum(log) {
             return log.reduce(function(accumulator, entry) {
                 return accumulator + entry.amount;
@@ -145,6 +151,10 @@
             return getOutgoingEntriesInLog(getEntriesWithCategoryInLog(category, log));
         }
 
+        function getMonthTransferEntries(month, log) {
+            return getTransferEntriesInLog(getEntriesForMonthInLog(month, log));
+        }
+
         function calculateAvailableBalanceForLog(log) {
             return calculateLogSum(getApprovedEntriesInLog(log));
         }
@@ -162,6 +172,10 @@
             return getTransferEntriesInLog(getOutgoingEntriesWithCategoryInLog(category, log));
         }
 
+        function getMonthTransferEntriesWithCategoryInLog(category, month, log) {
+            getEntriesWithCategoryInLog(category , getMonthTransferEntries(month, log));
+        }
+
         function calculateAvailaleBalanceForCategoryInLog(category, log) {
             return calculateLogSum(getApprovedEntriesWithCategoryInLog(category, log));
         }
@@ -174,6 +188,11 @@
             return log.findIndex(function(entry) {
                 return entry.type === "Transfer" && entry.category === category && entry.amount > 0;
             });
+        }
+
+        /* ATOMIC Level 4 - Complex Molecule */
+        function calculateMonthTransferTotalForCategoryInLog(category, month, log) {
+            return calculateLogSum(getMonthTransferEntriesWithCategoryInLog(category, month, log));
         }
 
         /* Not Categorized Yet */
