@@ -118,7 +118,7 @@
 
         function getEntriesForMonthInLog(month, log) {
             return log.filter(function(entry) {
-                return entry.date.findIndex(month) != -1
+                return entry.date.indexOf(month) != -1
             });
         }
 
@@ -173,7 +173,7 @@
         }
 
         function getMonthTransferEntriesWithCategoryInLog(category, month, log) {
-            getEntriesWithCategoryInLog(category , getMonthTransferEntries(month, log));
+            return getEntriesWithCategoryInLog(category , getMonthTransferEntries(month, log));
         }
 
         function calculateAvailaleBalanceForCategoryInLog(category, log) {
@@ -340,6 +340,7 @@
 
             renderCurrentViewInContainerForLog(leftView, log);
             renderMonthResultViewInContainerForLogWithDate(leftView, log, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1));
+            renderTransferTotalViewInContainerForLog(leftView, log);
             renderTransactionFormInContainerForLog(rightView, log);
             renderIncomingFormInContainerForLog(rightView, log);
             renderTransferFormInContainerForLog(rightView, log);
@@ -1412,6 +1413,69 @@
             tr.appendChild(td);
             
             tbody.appendChild(tr);
+        }
+
+        function renderTransferTotalViewInContainerForLog(container, log) {
+            // CURRENT VIEW
+            panel = document.createElement("div");
+            panel.className = "panel panel-default";
+            container.appendChild(panel);
+
+            panelHeading = document.createElement("div");
+            panelHeading.className = "panel-heading";
+            panel.appendChild(panelHeading);
+
+            panelTitle = document.createElement("h3");
+            panelTitle.className = "panel-title";
+            panelTitle.innerHTML = months[parseInt(new Date(Date.now()).getMonth() + 1)] + " " + new Date(Date.now()).getFullYear() + " - Transfer Total";
+            panelHeading.appendChild(panelTitle);
+
+            panelBody = document.createElement("div");
+            panelBody.className = "panel-body";
+            panel.appendChild(panelBody);
+            
+            // Current View
+            table = document.createElement("table");
+            table.className = "table table-striped table-bordered";
+            panelBody.appendChild(table);
+            
+            thead = document.createElement("thead");
+            table.appendChild(thead);
+            
+            tr = document.createElement("tr");
+            thead.appendChild(tr);
+            
+            th = document.createElement("th");
+            th.innerHTML = "Category";
+            tr.appendChild(th);
+            
+            th = document.createElement("th");
+            th.innerHTML = "Total";
+            tr.appendChild(th);
+            
+            tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+
+            // Category List
+            Object.keys(categories).sort().forEach(function(key){
+                tr = document.createElement("tr");
+
+                availableBalance = calculateMonthTransferTotalForCategoryInLog(key, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1), log);
+
+                if (availableBalance <= 0) {
+                    return;
+                }
+                
+                td = document.createElement("td");
+                td.innerHTML = key;
+                tr.appendChild(td);
+                
+                td = document.createElement("td");
+                td.innerHTML = formatForDisplay(availableBalance);
+                tr.appendChild(td);
+
+                tbody.appendChild(tr);
+            });
         }
 
         renderLoginScreen();
