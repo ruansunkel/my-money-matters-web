@@ -486,9 +486,6 @@
         thead.appendChild(tr);
 
         th = document.createElement("th");
-        th.innerHTML = "#";
-        tr.appendChild(th);
-        th = document.createElement("th");
         tr.appendChild(th);
         th = document.createElement("th");
         th.innerHTML = "Date";
@@ -531,11 +528,6 @@
 
                 tr = document.createElement("tr");
             }
-
-            td = document.createElement("td");
-            tr.appendChild(td);
-            tbody.appendChild(tr);
-            td.innerHTML = log.length - index;
 
             td = document.createElement("td");
             td.style.textAlign = "center";
