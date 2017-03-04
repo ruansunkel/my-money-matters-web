@@ -887,24 +887,13 @@
                 approved: document.getElementById("approved").checked
             };
 
-            index = 0;
-            if (document.getElementById("index").value !== "") {
-                index = log.length - parseInt(document.getElementById("index").value);
+            timestamp = (new Date(entry.date).getTime() / 1000).toFixed(0);
+            index = log.findIndex(function(entry) {
+                return (new Date(entry.date).getTime() / 1000).toFixed(2) < timestamp;
+            });
 
-                if (index > log.length - 1) {
-                    index = 0;
-                }
-                if (index < 0) {
-                    index = 0;
-                }
-
-                if (log[index].type === "Transfer" && log[index].amount < 0) {
-                    index -= 1;
-                }
-            }
-
-            if (index == 0) {
-                index = getIndexOfLatestApprovedEntry(log);
+            if (index === -1) {
+                index = log.length;
             }
 
             log.splice(index, 0, entry);
