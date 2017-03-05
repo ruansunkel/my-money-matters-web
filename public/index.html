@@ -881,7 +881,7 @@
 
             timestamp = (new Date(entry.date).getTime() / 1000).toFixed(0);
             index = log.findIndex(function(entry) {
-                return (new Date(entry.date).getTime() / 1000).toFixed(2) < timestamp;
+                return (new Date(entry.date).getTime() / 1000).toFixed(0) <= timestamp;
             });
 
             if (index === -1) {
@@ -1079,7 +1079,7 @@
 
             timestamp = (new Date(entry1.date).getTime() / 1000).toFixed(0);
             index = log.findIndex(function(entry) {
-                return (new Date(entry.date).getTime() / 1000).toFixed(2) < timestamp;
+                return (new Date(entry.date).getTime() / 1000).toFixed(0) <= timestamp;
             });
 
             if (index === -1) {
@@ -1250,7 +1250,7 @@
 
             timestamp = (new Date(entry.date).getTime() / 1000).toFixed(0);
             index = log.findIndex(function(entry) {
-                return (new Date(entry.date).getTime() / 1000).toFixed(2) < timestamp;
+                return (new Date(entry.date).getTime() / 1000).toFixed(0) <= timestamp;
             });
 
             if (index === -1) {
