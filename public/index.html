@@ -532,8 +532,19 @@
             td = document.createElement("td");
             td.style.textAlign = "center";
             tr.appendChild(td);
-            tbody.appendChild(tr);
             if (entry.type === "Transfer" && entry.amount > 0) {
+                // Add top margin
+                if (log[index - 1] && log[index - 1].date) {
+                    trt = document.createElement("tr");
+                    tdt = document.createElement("td");
+                    tdt.setAttribute("colspan", "11");
+                    tdt.style.height = "5px";
+                    tdt.style.padding = "0px";
+                    tdt.style.margin = "0px";
+                    trt.appendChild(tdt);
+                    tbody.appendChild(trt);
+                }
+
                 td.innerHTML = '<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>';
             }
             if (entry.type === "Transfer" && entry.amount < 0) {
@@ -545,15 +556,28 @@
             if (entry.type === "Transaction" && entry.amount > 0) {
                 td.innerHTML = '<span class="glyphicon glyphicon-usd" aria-hidden="true"></span><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             }
+            tbody.appendChild(tr);
+
+            if (entry.type === "Transfer" && entry.amount < 0) {
+                if (log[index + 1] && log[index + 1].type !== "Transfer") {
+                    // Add bottom margin
+                    trt = document.createElement("tr");
+                    tdt = document.createElement("td");
+                    tdt.setAttribute("colspan", "11");
+                    tdt.style.height = "5px";
+                    tdt.style.padding = "0px";
+                    tdt.style.margin = "0px";
+                    trt.appendChild(tdt);
+                    tbody.appendChild(trt);
+                }
+            }
 
             td = document.createElement("td");
             tr.appendChild(td);
-            tbody.appendChild(tr);
             td.innerHTML = entry.date;
 
             td = document.createElement("td");
             tr.appendChild(td);
-            tbody.appendChild(tr);
             if (entry.amount > 0) {
                 td.innerHTML = formatForDisplay(entry.amount) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
             } else {
@@ -562,12 +586,10 @@
 
             td = document.createElement("td");
             tr.appendChild(td);
-            tbody.appendChild(tr);
             td.innerHTML = entry.category;
 
             td = document.createElement("td");
             tr.appendChild(td);
-            tbody.appendChild(tr);
             td.innerHTML = entry.description;
 
             balance = 0;
@@ -583,7 +605,6 @@
 
             td = document.createElement("td");
             tr.appendChild(td);
-            tbody.appendChild(tr);
             td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + formatForDisplay(previous) + " to " + formatForDisplay(balance);
 
             if (balance < 0) {
@@ -608,7 +629,6 @@
             td.innerHTML = entry.approved ? '<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>';
             td.style.cursor = "pointer";
             tr.appendChild(td);
-            tbody.appendChild(tr);
 
             td.onclick = function() {
                 entry = log[index];
@@ -631,7 +651,6 @@
             td.innerHTML = '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>';
             td.style.cursor = "pointer";
             tr.appendChild(td);
-            tbody.appendChild(tr);
 
             td.onclick = function() {
                 if (!window.confirm("Are you sure you want to remove this entry?")) {
@@ -658,7 +677,6 @@
             td.innerHTML = '<span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>';
             td.style.cursor = "pointer";
             tr.appendChild(td);
-            tbody.appendChild(tr);
 
             td.onclick = function() {
                 if (index - 1 < 0) {
