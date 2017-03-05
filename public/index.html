@@ -607,10 +607,6 @@
             tr.appendChild(td);
             td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + formatForDisplay(previous) + " to " + formatForDisplay(balance);
 
-            if (balance < 0) {
-                tr.className = "danger";
-            }
-
             if (entry.amount > 0 && entry.type === "Transaction") {
                 tr.className = "success";
             }
@@ -621,6 +617,10 @@
 
             if (!entry.approved) {
                 tr.className = "info";
+            }
+
+            if (balance < 0) {
+                tr.className = "danger";
             }
 
             // Approve Entry
