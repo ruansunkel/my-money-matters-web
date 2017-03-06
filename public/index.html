@@ -546,16 +546,14 @@
             tr.appendChild(td);
             if (entry.type === "Transfer" && entry.amount > 0) {
                 // Add top margin
-                if (log[index - 1] && log[index - 1].date) {
-                    trt = document.createElement("tr");
-                    tdt = document.createElement("td");
-                    tdt.setAttribute("colspan", "11");
-                    tdt.style.height = "5px";
-                    tdt.style.padding = "0px";
-                    tdt.style.margin = "0px";
-                    trt.appendChild(tdt);
-                    tbody.appendChild(trt);
-                }
+                trt = document.createElement("tr");
+                tdt = document.createElement("td");
+                tdt.setAttribute("colspan", "11");
+                tdt.style.height = "5px";
+                tdt.style.padding = "0px";
+                tdt.style.margin = "0px";
+                trt.appendChild(tdt);
+                tbody.appendChild(trt);
 
                 td.innerHTML = '<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>';
             }
