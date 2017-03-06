@@ -1,0 +1,142 @@
+<html>
+
+<head>
+    <title>Tactical Money Planning - Goals</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {
+            packages: ["corechart"]
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            // 1 Emergency Fund
+            var data = google.visualization.arrayToDataTable([
+                ['Part', 'Amount'],
+                ['Owed', 0],
+                ['Paid', 10000]
+            ]);
+
+            var options = {
+                pieHole: 0.4,
+                pieSliceText: 'label',
+                legend: {
+                    position: "none"
+                },
+                slices: {
+                    0: {
+                        color: "orange"
+                    },
+                    1: {
+                        color: "blue"
+                    },
+                },
+                pieStartAngle: 45,
+                chartArea: {
+                    left: 10,
+                    top: 10,
+                    width: '90%',
+                    height: '90%'
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart1'));
+            chart.draw(data, options);
+
+            // 2 Positive Balance Sheet
+            var data = google.visualization.arrayToDataTable([
+                ['Part', 'Amount'],
+                ['Owed', 159563.34],
+                ['Paid', 436.66]
+            ]);
+
+            var options = {
+                pieHole: 0.4,
+                pieSliceText: 'label',
+                legend: {
+                    position: "none"
+                },
+                slices: {
+                    0: {
+                        color: "orange"
+                    },
+                    1: {
+                        offset: 0.3,
+                        color: "blue"
+                    },
+                },
+                pieStartAngle: 45,
+                chartArea: {
+                    left: 10,
+                    top: 10,
+                    width: '90%',
+                    height: '90%'
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart2'));
+            chart.draw(data, options);
+
+            // 3 Full Emergency Fund
+            var data = google.visualization.arrayToDataTable([
+                ['Part', 'Amount'],
+                ['Owed', 140000],
+                ['Paid', 0]
+            ]);
+
+            var options = {
+                pieHole: 0.4,
+                pieSliceText: 'label',
+                legend: {
+                    position: "none"
+                },
+                slices: {
+                    0: {
+                        color: "orange"
+                    },
+                    1: {
+                        offset: 0.3,
+                        color: "blue"
+                    },
+                },
+                pieStartAngle: 45,
+                chartArea: {
+                    left: 10,
+                    top: 10,
+                    width: '90%',
+                    height: '90%'
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart3'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Baby Steps</h1>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                1) Small Emergency Fund (R10,000.00) - Completed
+                <div id="chart1" style="width: 300px; height: 300px;"></div>
+            </div>
+            <div class="col-md-4">
+                2) Positive Balance Sheet (R160,000.00) - In Progress
+                <div id="chart2" style="width: 300px; height: 300px;"></div>
+            </div>
+            <div class="col-md-4">
+                3) Full Emergency Fund (R140,000.00) - Todo
+                <div id="chart3" style="width: 300px; height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
