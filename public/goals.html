@@ -17,8 +17,8 @@
             // 1 Emergency Fund
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
-                ['Owed', 0],
-                ['Paid', 10000]
+                ['Goal', 0],
+                ['Current', 10000]
             ]);
 
             var options = {
@@ -37,7 +37,7 @@
                 },
                 pieStartAngle: 45,
                 chartArea: {
-                    left: 10,
+                    left: 20,
                     top: 10,
                     width: '90%',
                     height: '90%'
@@ -50,8 +50,8 @@
             // 2 Positive Balance Sheet
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
-                ['Owed', 159563.34],
-                ['Paid', 436.66]
+                ['Goal', 159563.34],
+                ['Current', 436.66]
             ]);
 
             var options = {
@@ -71,7 +71,7 @@
                 },
                 pieStartAngle: 45,
                 chartArea: {
-                    left: 10,
+                    left: 20,
                     top: 10,
                     width: '90%',
                     height: '90%'
@@ -84,8 +84,8 @@
             // 3 Full Emergency Fund
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
-                ['Owed', 140000],
-                ['Paid', 0]
+                ['Goal', 140000],
+                ['Current', 0]
             ]);
 
             var options = {
@@ -105,7 +105,7 @@
                 },
                 pieStartAngle: 45,
                 chartArea: {
-                    left: 10,
+                    left: 20,
                     top: 10,
                     width: '90%',
                     height: '90%'
@@ -119,20 +119,20 @@
 </head>
 
 <body>
-    <h1>Baby Steps</h1>
+    <h1 style="margin: 20px;">Baby Steps</h1>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
-                1) Small Emergency Fund (R10,000.00) - Completed
+                Small Emergency Fund (R10,000.00) - Completed
                 <div id="chart1" style="width: 300px; height: 300px;"></div>
             </div>
             <div class="col-md-4">
-                2) Positive Balance Sheet (R160,000.00) - In Progress
+                Positive Balance Sheet (R160,000.00) - In Progress
                 <div id="chart2" style="width: 300px; height: 300px;"></div>
             </div>
             <div class="col-md-4">
-                3) Full Emergency Fund (R140,000.00) - Todo
+                Full Emergency Fund (R140,000.00)
                 <div id="chart3" style="width: 300px; height: 300px;"></div>
             </div>
         </div>
