@@ -486,9 +486,9 @@
         thead.appendChild(tr);
 
         th = document.createElement("th");
+        th.innerHTML = "Date";
         tr.appendChild(th);
         th = document.createElement("th");
-        th.innerHTML = "Date";
         tr.appendChild(th);
         th = document.createElement("th");
         th.innerHTML = "Action";
@@ -527,6 +527,19 @@
                 td.innerHTML = "<b>" + months[parseInt(currentdate.split("-")[1])] + " " + currentdate.split("-")[0] + "</b>";
 
                 tr = document.createElement("tr");
+            }
+
+            // Date
+            td = document.createElement("td");
+            td.innerHTML = entry.date;
+
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                td.setAttribute("rowspan", "2");
+                td.style.verticalAlign = "middle";
+            }
+
+            if (entry.type !== "Transfer" || entry.amount > 0) {
+                tr.appendChild(td);
             }
 
             // Icon
@@ -571,19 +584,6 @@
                     trt.appendChild(tdt);
                     tbody.appendChild(trt);
                 }
-            }
-
-            // Date
-            td = document.createElement("td");
-            td.innerHTML = entry.date;
-
-            if (entry.type === "Transfer" && entry.amount > 0) {
-                td.setAttribute("rowspan", "2");
-                td.style.verticalAlign = "middle";
-            }
-
-            if (entry.type !== "Transfer" || entry.amount > 0) {
-                tr.appendChild(td);
             }
 
             // Action
