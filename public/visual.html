@@ -1,0 +1,221 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['sankey']
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            combinedIncome = "Combined Income (R43717.77)";
+            fixedExpences = "Fixed Expences (R22,441.82)";
+            livingExpences = "Living Expences (R11,275.95)";
+            savings = "Savings (R10,000)";
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', 'Weight');
+
+            data.addRows([
+                [combinedIncome, fixedExpences, 22441.82],
+                [fixedExpences, 'Rent (R8,500)', 8500],
+                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
+                [fixedExpences, 'Medical Aid (R3,129)', 3129],
+                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
+                [fixedExpences, 'Domestic Work (R1,500)', 1500],
+                [fixedExpences, 'Insurance (R751.36)', 751.36],
+                [fixedExpences, 'Income Protector (R645)', 645.05],
+                [fixedExpences, 'Internet (R607.50)', 607.50],
+                [fixedExpences, 'Electricity (R500)', 500],
+                [fixedExpences, 'Municipal Rates (R500)', 500],
+                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
+                [fixedExpences, 'Bank Charges (R200)', 200],
+                [fixedExpences, 'Websites (R118)', 118],
+                [fixedExpences, 'Car Paint Insurance (R99)', 99],
+
+                [combinedIncome, livingExpences, 11275.95],
+                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
+                [livingExpences, 'Fun (R2,500)', 2500],
+                [livingExpences, "Petrol (R2,000)", 2000],
+
+                [combinedIncome, savings, 10000],
+                [savings, "Lucy (R3,000)", 3000],
+                [savings, "Pilates (R3,000)", 3000],
+                [savings, "Anniversary (R4,000)", 4000]
+            ]);
+
+            // Sets chart options.
+            var options = {
+                sankey: {
+                    node: {
+                        interactivity: false,
+                        labelPadding: 6,
+                        nodePadding: 10,
+                        width: 5
+                    }
+                }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic1'));
+            chart.draw(data, options);
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', 'Weight');
+
+            data.addRows([
+                [combinedIncome, fixedExpences, 22441.82],
+                [fixedExpences, 'Rent (R8,500)', 8500],
+                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
+                [fixedExpences, 'Medical Aid (R3,129)', 3129],
+                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
+                [fixedExpences, 'Domestic Work (R1,500)', 1500],
+                [fixedExpences, 'Insurance (R751.36)', 751.36],
+                [fixedExpences, 'Income Protector (R645)', 645.05],
+                [fixedExpences, 'Internet (R607.50)', 607.50],
+                [fixedExpences, 'Electricity (R500)', 500],
+                [fixedExpences, 'Municipal Rates (R500)', 500],
+                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
+                [fixedExpences, 'Bank Charges (R200)', 200],
+                [fixedExpences, 'Websites (R118)', 118],
+                [fixedExpences, 'Car Paint Insurance (R99)', 99],
+
+                [combinedIncome, livingExpences, 11275.95],
+                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
+                [livingExpences, 'Fun (R2,500)', 2500],
+                [livingExpences, "Petrol (R2,000)", 2000],
+
+                [combinedIncome, savings, 10000],
+                [savings, "Kia Rio Early Settlement (R10,000)", 10000],
+            ]);
+
+            // Sets chart options.
+            var options = {
+                sankey: {
+                    node: {
+                        interactivity: false,
+                        labelPadding: 6,
+                        nodePadding: 10,
+                        width: 5
+                    }
+                }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic2'));
+            chart.draw(data, options);
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', 'Weight');
+
+            data.addRows([
+                [combinedIncome, fixedExpences, 22441.82],
+                [fixedExpences, 'Rent (R8,500)', 8500],
+                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
+                [fixedExpences, 'Medical Aid (R3,129)', 3129],
+                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
+                [fixedExpences, 'Domestic Work (R1,500)', 1500],
+                [fixedExpences, 'Insurance (R751.36)', 751.36],
+                [fixedExpences, 'Income Protector (R645)', 645.05],
+                [fixedExpences, 'Internet (R607.50)', 607.50],
+                [fixedExpences, 'Electricity (R500)', 500],
+                [fixedExpences, 'Municipal Rates (R500)', 500],
+                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
+                [fixedExpences, 'Bank Charges (R200)', 200],
+                [fixedExpences, 'Websites (R118)', 118],
+                [fixedExpences, 'Car Paint Insurance (R99)', 99],
+
+                [combinedIncome, livingExpences, 11275.95],
+                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
+                [livingExpences, 'Fun (R2,500)', 2500],
+                [livingExpences, "Petrol (R2,000)", 2000],
+
+                [combinedIncome, savings, 10000],
+                [savings, "House Fund (R10,000)", 10000],
+            ]);
+
+            // Sets chart options.
+            var options = {
+                sankey: {
+                    node: {
+                        interactivity: false,
+                        labelPadding: 6,
+                        nodePadding: 10,
+                        width: 5
+                    }
+                }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic3'));
+            chart.draw(data, options);
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', 'Weight');
+
+            data.addRows([
+                [combinedIncome, fixedExpences, 22441.82],
+                [fixedExpences, 'Rent (R8,500)', 8500],
+                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
+                [fixedExpences, 'Medical Aid (R3,129)', 3129],
+                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
+                [fixedExpences, 'Domestic Work (R1,500)', 1500],
+                [fixedExpences, 'Insurance (R751.36)', 751.36],
+                [fixedExpences, 'Income Protector (R645)', 645.05],
+                [fixedExpences, 'Internet (R607.50)', 607.50],
+                [fixedExpences, 'Electricity (R500)', 500],
+                [fixedExpences, 'Municipal Rates (R500)', 500],
+                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
+                [fixedExpences, 'Bank Charges (R200)', 200],
+                [fixedExpences, 'Websites (R118)', 118],
+                [fixedExpences, 'Car Paint Insurance (R99)', 99],
+
+                [combinedIncome, livingExpences, 11275.95],
+                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
+                [livingExpences, 'Fun (R2,500)', 2500],
+                [livingExpences, "Petrol (R2,000)", 2000],
+
+                [combinedIncome, savings, 10000],
+                [savings, "Kamonande Fund (R10,000)", 10000],
+            ]);
+
+            // Sets chart options.
+            var options = {
+                sankey: {
+                    node: {
+                        interactivity: false,
+                        labelPadding: 6,
+                        nodePadding: 10,
+                        width: 5
+                    }
+                }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic4'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>February 2017</h1>
+    <div id="sankey_basic1" style="width: 100%; height: 400px;"></div>
+    <h1>March 2017</h1>
+    <div id="sankey_basic2" style="width: 100%; height: 400px;"></div>
+    <h1>April 2017</h1>
+    <div id="sankey_basic3" style="width: 100%; height: 400px;"></div>
+    <h1>May 2017</h1>
+    <div id="sankey_basic4" style="width: 100%; height: 400px;"></div>
+</body>
+
+</html>
