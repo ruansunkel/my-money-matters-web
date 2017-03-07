@@ -270,6 +270,43 @@
 
             var chart = new google.visualization.PieChart(document.getElementById('chart7'));
             chart.draw(data, options);
+
+            // 8 Income Generating Investment
+            var data = google.visualization.arrayToDataTable([
+                ['Part', 'Amount'],
+                ['Goal', 10000000],
+                ['Current', 0]
+            ]);
+
+            var options = {
+                pieHole: 0.4,
+                pieSliceText: 'label',
+                legend: {
+                    position: "none"
+                },
+                slices: {
+                    0: {
+                        color: "#ff9500"
+                    },
+                    1: {
+                        offset: 0.05,
+                        color: "#4cd964"
+                    },
+                },
+                pieSliceTextStyle: {
+                    color: 'black',
+                },
+                pieStartAngle: 45,
+                chartArea: {
+                    left: 15,
+                    top: 15,
+                    width: '90%',
+                    height: '90%'
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart8'));
+            chart.draw(data, options);
         }
     </script>
 </head>
@@ -277,7 +314,7 @@
 <body>
     <div class="container-fluid">
         <div class="page-header">
-            <h1>7 Baby Steps</h1>
+            <h1>7 Baby Steps Progress</h1>
         </div>
 
         <div class="row">
@@ -338,6 +375,21 @@
                     <div class="panel-heading">Give Away (90%pm)</div>
                     <div class="panel-body">
                         <div id="chart7" style="width: 300px; height: 300px; margin: auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <h1>Other Goals Progress</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">Income Generating Investment (R10,000,000.00)</div>
+                    <div class="panel-body">
+                        <div id="chart8" style="width: 300px; height: 300px; margin: auto;"></div>
                     </div>
                 </div>
             </div>
