@@ -8,12 +8,83 @@
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+        /* FORMATTING FUNCTIONS */
+
+        function roundToTwoDecimalPlaces(number) {
+            return Math.round(number * 100) / 100;
+        }
+
+        function formatForDisplay(number) {
+            return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', {
+                style: 'currency',
+                currency: 'ZAR'
+            });
+        }
+
+        incomeList = [{
+            "name": "Ruan",
+            value: 32062.77
+        }, {
+            "name": "Jessi",
+            value: 11655
+        }];
+
+        fixedExpencesList = [{
+            "name": "Rent",
+            value: 8500
+        }, {
+            "name": "Car Payment",
+            value: 4078.50
+        }, {
+            "name": "Medical Aid",
+            value: 3129
+        }, {
+            "name": "Retirement Annuity",
+            value: 1560
+        }, {
+            "name": "Domestic Work",
+            value: 1500
+        }, {
+            "name": "Car/Household Insurance",
+            value: 751.36
+        }, {
+            "name": "Income Protector",
+            value: 645.05
+        }, {
+            "name": "Internet",
+            value: 607.50
+        }, {
+            "name": "Electricity",
+            value: 500
+        }, {
+            "name": "Municipal Rates",
+            value: 500
+        }, {
+            "name": "Car Service Plan",
+            value: 253.41
+        }, {
+            "name": "Bank Charges",
+            value: 200
+        }, {
+            "name": "Websites",
+            value: 118
+        }, {
+            "name": "Car Paint Insurance",
+            value: 99
+        }];
+
         google.charts.load('current', {
             'packages': ['sankey']
         });
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
+            // Dynamic Charts
+            combinedIncomeString = "Income (" + formatForDisplay(incomeList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0)) + ")";
+
+            // Current Charts
             ruan = "Ruan (R32,062.77 - Pfortner)";
             jessi = "Jessi (R11,655.00 - Young Engineers)"
 
