@@ -21,6 +21,7 @@
             });
         }
 
+        /* FIXED DATA */
         incomeList = [{
             "name": "Ruan",
             value: 32062.77
@@ -68,70 +69,81 @@
         }, {
             "name": "Websites",
             value: 118
+        }];
+
+        livingExpencesList = [{
+            "name": "Groceries",
+            value: 6775.95
         }, {
-            "name": "Car Paint Insurance",
-            value: 99
+            "name": "Fun",
+            value: 2500
+        }, {
+            "name": "Petrol",
+            value: 2000
         }];
 
         google.charts.load('current', {
             'packages': ['sankey']
         });
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawCharts);
 
-        function drawChart() {
-            // Dynamic Charts
+        function drawChart(root, incomeList, fixedExpencesList, livingExpencesList, savingExpencesList) {
             incomeString = "Income (" + formatForDisplay(incomeList.reduce(function(accumulator, entry) {
                 return accumulator + entry.value;
             }, 0)) + ")";
 
-            fixedExpencesString = "Income (" + formatForDisplay(fixedExpencesList.reduce(function(accumulator, entry) {
+            fixedExpencesString = "Fixed Expences (" + formatForDisplay(fixedExpencesList.reduce(function(accumulator, entry) {
                 return accumulator + entry.value;
             }, 0)) + ")";
 
-            // Current Charts
-            ruan = "Ruan (R32,062.77 - Pfortner)";
-            jessi = "Jessi (R11,655.00 - Young Engineers)"
+            fixedExpencesValue = roundToTwoDecimalPlaces(fixedExpencesList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0));
 
-            combinedIncome = "Income (R43717.77)";
-            fixedExpences = "Fixed Expences (R22,441.82)";
-            livingExpences = "Living Expences (R11,275.95)";
-            savings = "Savings (R10,000)";
+            livingExpencesString = "Living Expences (" + formatForDisplay(livingExpencesList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0)) + ")";
+
+            livingExpencesValue = roundToTwoDecimalPlaces(livingExpencesList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0));
+
+            savingExpencesString = "Savings (" + formatForDisplay(savingExpencesList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0)) + ")";
+
+            savingExpencesValue = roundToTwoDecimalPlaces(savingExpencesList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0));
 
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'From');
             data.addColumn('string', 'To');
             data.addColumn('number', 'Weight');
 
-            data.addRows([
-                [ruan, combinedIncome, 32062.77],
-                [jessi, combinedIncome, 11655],
+            rows = [];
 
-                [combinedIncome, fixedExpences, 22441.82],
-                [fixedExpences, 'Rent (R8,500)', 8500],
-                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
-                [fixedExpences, 'Medical Aid (R3,129)', 3129],
-                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
-                [fixedExpences, 'Domestic Work (R1,500)', 1500],
-                [fixedExpences, 'Insurance (R751.36)', 751.36],
-                [fixedExpences, 'Income Protector (R645.05)', 645.05],
-                [fixedExpences, 'Internet (R607.50)', 607.50],
-                [fixedExpences, 'Electricity (R500)', 500],
-                [fixedExpences, 'Municipal Rates (R500)', 500],
-                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
-                [fixedExpences, 'Bank Charges (R200)', 200],
-                [fixedExpences, 'Websites (R118)', 118],
-                [fixedExpences, 'Car Paint Insurance (R99)', 99],
+            incomeList.forEach(function(entry) {
+                rows.push([entry.name + " (" + formatForDisplay(entry.value) + ")", incomeString, entry.value]);
+            });
 
-                [combinedIncome, livingExpences, 11275.95],
-                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
-                [livingExpences, 'Fun (R2,500)', 2500],
-                [livingExpences, "Petrol (R2,000)", 2000],
+            rows.push([incomeString, fixedExpencesString, fixedExpencesValue]);
+            rows.push([incomeString, livingExpencesString, livingExpencesValue]);
+            rows.push([incomeString, savingExpencesString, savingExpencesValue]);
 
-                [combinedIncome, savings, 10000],
-                [savings, "Lucy (R3,000)", 3000],
-                [savings, "Pilates (R3,000)", 3000],
-                [savings, "Anniversary (R4,000)", 4000]
-            ]);
+            fixedExpencesList.forEach(function(entry) {
+                rows.push([fixedExpencesString, entry.name + " (" + formatForDisplay(entry.value) + ")", entry.value]);
+            });
+
+            livingExpencesList.forEach(function(entry) {
+                rows.push([livingExpencesString, entry.name + " (" + formatForDisplay(entry.value) + ")", entry.value]);
+            });
+
+            savingExpencesList.forEach(function(entry) {
+                rows.push([savingExpencesString, entry.name + " (" + formatForDisplay(entry.value) + ")", entry.value]);
+            });
+
+            data.addRows(rows);
 
             // Sets chart options.
             var options = {
@@ -148,165 +160,32 @@
                 }
             };
 
-            // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic1'));
+            var chart = new google.visualization.Sankey(root);
             chart.draw(data, options);
+        }
 
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'From');
-            data.addColumn('string', 'To');
-            data.addColumn('number', 'Weight');
-
-            data.addRows([
-                [ruan, combinedIncome, 32062.77],
-                [jessi, combinedIncome, 11655],
-
-                [combinedIncome, fixedExpences, 22441.82],
-                [fixedExpences, 'Rent (R8,500)', 8500],
-                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
-                [fixedExpences, 'Medical Aid (R3,129)', 3129],
-                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
-                [fixedExpences, 'Domestic Work (R1,500)', 1500],
-                [fixedExpences, 'Insurance (R751.36)', 751.36],
-                [fixedExpences, 'Income Protector (R645.05)', 645.05],
-                [fixedExpences, 'Internet (R607.50)', 607.50],
-                [fixedExpences, 'Electricity (R500)', 500],
-                [fixedExpences, 'Municipal Rates (R500)', 500],
-                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
-                [fixedExpences, 'Bank Charges (R200)', 200],
-                [fixedExpences, 'Websites (R118)', 118],
-                [fixedExpences, 'Car Paint Insurance (R99)', 99],
-
-                [combinedIncome, livingExpences, 11275.95],
-                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
-                [livingExpences, 'Fun (R2,500)', 2500],
-                [livingExpences, "Petrol (R2,000)", 2000],
-
-                [combinedIncome, savings, 10000],
-                [savings, "Kia Rio Early Settlement (R10,000)", 10000],
-            ]);
-
-            // Sets chart options.
-            var options = {
-                sankey: {
-                    node: {
-                        interactivity: false,
-                        nodePadding: 20,
-                        width: 5,
-                        label: {
-                            fontSize: 15
-                        },
-                    }
-                }
-            };
-
-            // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic2'));
-            chart.draw(data, options);
-
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'From');
-            data.addColumn('string', 'To');
-            data.addColumn('number', 'Weight');
-
-            data.addRows([
-                [ruan, combinedIncome, 32062.77],
-                [jessi, combinedIncome, 11655],
-
-                [combinedIncome, fixedExpences, 22441.82],
-                [fixedExpences, 'Rent (R8,500)', 8500],
-                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
-                [fixedExpences, 'Medical Aid (R3,129)', 3129],
-                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
-                [fixedExpences, 'Domestic Work (R1,500)', 1500],
-                [fixedExpences, 'Insurance (R751.36)', 751.36],
-                [fixedExpences, 'Income Protector (R645.05)', 645.05],
-                [fixedExpences, 'Internet (R607.50)', 607.50],
-                [fixedExpences, 'Electricity (R500)', 500],
-                [fixedExpences, 'Municipal Rates (R500)', 500],
-                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
-                [fixedExpences, 'Bank Charges (R200)', 200],
-                [fixedExpences, 'Websites (R118)', 118],
-                [fixedExpences, 'Car Paint Insurance (R99)', 99],
-
-                [combinedIncome, livingExpences, 11275.95],
-                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
-                [livingExpences, 'Fun (R2,500)', 2500],
-                [livingExpences, "Petrol (R2,000)", 2000],
-
-                [combinedIncome, savings, 10000],
-                [savings, "House Fund (R10,000)", 10000],
-            ]);
-
-            // Sets chart options.
-            var options = {
-                sankey: {
-                    node: {
-                        interactivity: false,
-                        nodePadding: 20,
-                        width: 5,
-                        label: {
-                            fontSize: 15
-                        },
-                    }
-                }
-            };
-
-            // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic3'));
-            chart.draw(data, options);
-
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'From');
-            data.addColumn('string', 'To');
-            data.addColumn('number', 'Weight');
-
-            data.addRows([
-                [ruan, combinedIncome, 32062.77],
-                [jessi, combinedIncome, 11655],
-
-                [combinedIncome, fixedExpences, 22441.82],
-                [fixedExpences, 'Rent (R8,500)', 8500],
-                [fixedExpences, 'Car Payment (R4,078.50)', 4078.50],
-                [fixedExpences, 'Medical Aid (R3,129)', 3129],
-                [fixedExpences, 'Retirement Annuity (R1,560)', 1560],
-                [fixedExpences, 'Domestic Work (R1,500)', 1500],
-                [fixedExpences, 'Insurance (R751.36)', 751.36],
-                [fixedExpences, 'Income Protector (R645.05)', 645.05],
-                [fixedExpences, 'Internet (R607.50)', 607.50],
-                [fixedExpences, 'Electricity (R500)', 500],
-                [fixedExpences, 'Municipal Rates (R500)', 500],
-                [fixedExpences, 'Car Service Plan (R253.41)', 253.41],
-                [fixedExpences, 'Bank Charges (R200)', 200],
-                [fixedExpences, 'Websites (R118)', 118],
-                [fixedExpences, 'Car Paint Insurance (R99)', 99],
-
-                [combinedIncome, livingExpences, 11275.95],
-                [livingExpences, 'Groceries (R6,874.36)', 6775.95],
-                [livingExpences, 'Fun (R2,500)', 2500],
-                [livingExpences, "Petrol (R2,000)", 2000],
-
-                [combinedIncome, savings, 10000],
-                [savings, "Kamonande Fund (R10,000)", 10000],
-            ]);
-
-            // Sets chart options.
-            var options = {
-                sankey: {
-                    node: {
-                        interactivity: false,
-                        nodePadding: 20,
-                        width: 5,
-                        label: {
-                            fontSize: 15
-                        },
-                    }
-                }
-            };
-
-            // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic4'));
-            chart.draw(data, options);
+        function drawCharts() {
+            drawChart(document.getElementById("sankey_basic2"), incomeList, fixedExpencesList, livingExpencesList, [{
+                "name": "Kia Rio Early Settlement",
+                value: 10000
+            }, {
+                "name": "Kia Rio Early Settlement",
+                value: 99
+            }]);
+            drawChart(document.getElementById("sankey_basic3"), incomeList, fixedExpencesList, livingExpencesList, [{
+                "name": "House Fund",
+                value: 10000
+            }, {
+                "name": "Kia Rio Early Settlement",
+                value: 99
+            }]);
+            drawChart(document.getElementById("sankey_basic4"), incomeList, fixedExpencesList, livingExpencesList, [{
+                "name": "Kamonande Fund",
+                value: 10000
+            }, {
+                "name": "Kia Rio Early Settlement",
+                value: 99
+            }]);
         }
     </script>
 </head>
@@ -316,9 +195,6 @@
         <div class="page-header">
             <h1>Monthly Budget Visual Representation</h1>
         </div>
-
-        <h2>February 2017</h2>
-        <div id="sankey_basic1" style="width: 100%; height: 600px;"></div>
 
         <h2>March 2017</h2>
         <div id="sankey_basic2" style="width: 100%; height: 600px;"></div>
