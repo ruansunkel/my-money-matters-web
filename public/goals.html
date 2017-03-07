@@ -29,10 +29,10 @@
                 },
                 slices: {
                     0: {
-                        color: "orange"
+                        color: "#ff9500"
                     },
                     1: {
-                        color: "blue"
+                        color: "#4cd964"
                     },
                 },
                 pieStartAngle: 45,
@@ -40,8 +40,8 @@
                     color: 'black',
                 },
                 chartArea: {
-                    left: 20,
-                    top: 10,
+                    left: 15,
+                    top: 15,
                     width: '90%',
                     height: '90%'
                 }
@@ -65,11 +65,11 @@
                 },
                 slices: {
                     0: {
-                        color: "orange"
+                        color: "#ff9500"
                     },
                     1: {
                         offset: 0.3,
-                        color: "blue"
+                        color: "#4cd964"
                     },
                 },
                 pieSliceTextStyle: {
@@ -77,8 +77,8 @@
                 },
                 pieStartAngle: 45,
                 chartArea: {
-                    left: 20,
-                    top: 10,
+                    left: 15,
+                    top: 15,
                     width: '90%',
                     height: '90%'
                 }
@@ -102,11 +102,10 @@
                 },
                 slices: {
                     0: {
-                        color: "orange"
+                        color: "#ff9500"
                     },
                     1: {
-                        offset: 0.3,
-                        color: "blue"
+                        color: "#4cd964"
                     },
                 },
                 pieSliceTextStyle: {
@@ -114,8 +113,8 @@
                 },
                 pieStartAngle: 45,
                 chartArea: {
-                    left: 20,
-                    top: 10,
+                    left: 15,
+                    top: 15,
                     width: '90%',
                     height: '90%'
                 }
@@ -128,21 +127,35 @@
 </head>
 
 <body>
-    <h1 style="margin: 20px;">Baby Steps</h1>
-
     <div class="container-fluid">
+        <div class="page-header">
+            <h1>7 Baby Steps</h1>
+        </div>
+
         <div class="row">
             <div class="col-md-4">
-                Small Emergency Fund (R10,000.00) - Completed
-                <div id="chart1" style="width: 300px; height: 300px;"></div>
+                <div class="panel panel-success">
+                    <div class="panel-heading">Small Emergency Fund (R10,000.00) - Completed</div>
+                    <div class="panel-body">
+                        <div id="chart1" style="width: 300px; height: 300px; margin: auto;"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                Positive Balance Sheet (R160,000.00) - In Progress
-                <div id="chart2" style="width: 300px; height: 300px;"></div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">Positive Balance Sheet (R160,000.00) - In Progress</div>
+                    <div class="panel-body">
+                        <div id="chart2" style="width: 300px; height: 300px; margin: auto;"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                Full Emergency Fund (R140,000.00)
-                <div id="chart3" style="width: 300px; height: 300px;"></div>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">Full Emergency Fund (R140,000.00)</div>
+                    <div class="panel-body">
+                        <div id="chart3" style="width: 300px; height: 300px; margin: auto;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
