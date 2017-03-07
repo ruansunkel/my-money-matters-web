@@ -80,7 +80,11 @@
 
         function drawChart() {
             // Dynamic Charts
-            combinedIncomeString = "Income (" + formatForDisplay(incomeList.reduce(function(accumulator, entry) {
+            incomeString = "Income (" + formatForDisplay(incomeList.reduce(function(accumulator, entry) {
+                return accumulator + entry.value;
+            }, 0)) + ")";
+
+            fixedExpencesString = "Income (" + formatForDisplay(fixedExpencesList.reduce(function(accumulator, entry) {
                 return accumulator + entry.value;
             }, 0)) + ")";
 
