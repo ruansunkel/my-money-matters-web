@@ -123,11 +123,11 @@
             var chart = new google.visualization.PieChart(document.getElementById('chart3'));
             chart.draw(data, options);
 
-            // 4 Full Emergency Fund
+            // 4 15% Retirement
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
-                ['Goal', 7000],
-                ['Current', 1560]
+                ['Goal', 15],
+                ['Current', 3.5]
             ]);
 
             var options = {
@@ -309,7 +309,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-warning">
-                    <div class="panel-heading">15% Retirement (R7,000.00pm)</div>
+                    <div class="panel-heading">15% Retirement (15%pm)</div>
                     <div class="panel-body">
                         <div id="chart4" style="width: 300px; height: 300px; margin: auto;"></div>
                     </div>
