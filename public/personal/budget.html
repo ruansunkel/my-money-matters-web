@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tactical Money Planning</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <!--Include Bootstrap CSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+
+    <!--Include jQuery Theme-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!--Include jQuery JS-->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+    <!--Include jQueryUI JS-->
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" integrity="sha256-DI6NdAhhFRnO2k51mumYeDShet3I8AKCQf/tf7ARNhI=" crossorigin="anonymous"></script>
+
+    <!--Include Firebase JS-->
+    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
+</head>
+
+<body></body>
+
+<script type="text/javascript">
+    /* FIREBASE INITIALIZATION */
+    firebase.initializeApp({
+        apiKey: "AIzaSyDduHfieTkSq1KFVKxpmnok3Dg9jtkFtgA",
+        authDomain: "ruans-app-aa38f.firebaseapp.com",
+        databaseURL: "https://ruans-app-aa38f.firebaseio.com",
+        storageBucket: "ruans-app-aa38f.appspot.com",
+        messagingSenderId: "935783809503"
+    });
+
+    /* GLOBAL VAIRABLES */
+    user = "";
+    categories = {};
+
+    /* FORMATTING FUNCTIONS */
+
+    function roundToTwoDecimalPlaces(number) {
+        return Math.round(number * 100) / 100;
+    }
+
+    function formatForDisplay(number) {
+        return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', {
+            style: 'currency',
+            currency: 'ZAR'
+        });
+    }
+
+    months = {
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December",
+        "13": "January"
+    };
+
+    /* LOG API FUNCTIONS - In order of Atomicity */
+
+    /* ATOMIC Level 1 - Subatomic Particle */
+    function getEntriesWithCategoryInLog(category, log) {
+        return log.filter(function(entry) {
+            return entry.category === category;
+        });
+    }
+
+    function getApprovedEntriesInLog(log) {
+        return log.filter(function(entry) {
+            return entry.approved;
+        });
+    }
+
+    function getTransactionEntriesInLog(log) {
+        return log.filter(function(entry) {
+            return entry.type === "Transaction";
+        });
+    }
+
+    function getTransferEntriesInLog(log) {
+        return log.filter(function(entry) {
+            return entry.type === "Transfer";
+        });
+    }
+
+    function getIncomingEntriesInLog(log) {
+        return log.filter(function(entry) {
+            return entry.amount > 0;
+        });
+    }
+
+    function getOutgoingEntriesInLog(log) {
+        return log.filter(function(entry) {
+            return entry.amount < 0;
+        });
+    }
+
+    function getEntriesForMonthInLog(month, log) {
+        return log.filter(function(entry) {
+            return entry.date.indexOf(month) != -1;
+        });
+    }
+
+    function calculateLogSum(log) {
+        return log.reduce(function(accumulator, entry) {
+            return accumulator + entry.amount;
+        }, 0);
+    }
+
+    function getIndexOfLatestApprovedEntry(log) {
+        return log.findIndex(function(entry) {
+            return entry.approved;
+        });
+    }
+
+    function getLogUpToIndex(log, index) {
+        return log.slice(0, index);
+    }
+
+    /* ATOMIC Level 2 - Atom */
+    function getApprovedEntriesWithCategoryInLog(category, log) {
+        return getApprovedEntriesInLog(getEntriesWithCategoryInLog(category, log));
+    }
+
+    function getIncomingEntriesWithCategoryInLog(category, log) {
+        return getIncomingEntriesInLog(getEntriesWithCategoryInLog(category, log));
+    }
+
+    function getOutgoingEntriesWithCategoryInLog(category, log) {
+        return getOutgoingEntriesInLog(getEntriesWithCategoryInLog(category, log));
+    }
+
+    function getMonthTransferEntries(month, log) {
+        return getTransferEntriesInLog(getEntriesForMonthInLog(month, log));
+    }
+
+    function calculateAvailableBalanceForLog(log) {
+        return calculateLogSum(getApprovedEntriesInLog(log));
+    }
+
+    function calculateTotalBalanceForCategoryInLog(category, log) {
+        return calculateLogSum(getEntriesWithCategoryInLog(category, log));
+    }
+
+    /* ATOMIC Level 3 - Molecule */
+    function getOutgoingTransactionsWithCategoryInLog(category, log) {
+        return getTransactionEntriesInLog(getOutgoingEntriesWithCategoryInLog(category, log));
+    }
+
+    function getOutgoingTransfersWithCategoryInLog(category, log) {
+        return getTransferEntriesInLog(getOutgoingEntriesWithCategoryInLog(category, log));
+    }
+
+    function getMonthTransferEntriesWithCategoryInLog(category, month, log) {
+        return getEntriesWithCategoryInLog(category, getMonthTransferEntries(month, log));
+    }
+
+    function calculateAvailaleBalanceForCategoryInLog(category, log) {
+        return calculateLogSum(getApprovedEntriesWithCategoryInLog(category, log));
+    }
+
+    function calculateIncomingTotalWithCategoryInLog(category, log) {
+        return calculateLogSum(getIncomingEntriesWithCategoryInLog(category, log));
+    }
+
+    function getMostRecentPositiveTransferIndexForCategoryInLog(category, log) {
+        return log.findIndex(function(entry) {
+            return entry.type === "Transfer" && entry.category === category && entry.amount > 0;
+        });
+    }
+
+    /* ATOMIC Level 4 - Complex Molecule */
+    function calculateMonthTransferTotalForCategoryInLog(category, month, log) {
+        return calculateLogSum(getMonthTransferEntriesWithCategoryInLog(category, month, log));
+    }
+
+    /* Not Categorized Yet */
+    function saveLog(log) {
+        list = [];
+
+        log.forEach(function(entry) {
+            list.push("{\"date\":\"" + entry.date + "\", \"type\":\"" + entry.type + "\", \"category\":\"" + entry.category + "\", \"description\":\"" + entry.description + "\", \"amount\":" + entry.amount + ", \"approved\":" + entry.approved + "}");
+        });
+
+        firebase.database().ref(user).set({
+            list: "[" + list.join() + "]"
+        });
+    }
+
+    function retrieveAndRenderLog(user) {
+        firebase.database().ref(user).once("value").then(function(snapshot) {
+            renderLog(JSON.parse(snapshot.child("list").val()));
+        });
+    }
+
+    /* SCREEN RENDER FUNCTIONS */
+    function renderLoginScreen() {
+        document.body.innerHTML = "";
+
+        pageHeader = document.createElement("div");
+        pageHeader.className = "page-header";
+        pageHeader.style.margin = "20px";
+        pageHeader.style.textAlign = "center";
+        document.body.appendChild(pageHeader);
+
+        h1 = document.createElement("h1");
+        h1.innerHTML = "Tactical Money Planning";
+        pageHeader.appendChild(h1);
+
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        panel.style.width = "300px";
+        panel.style.margin = "40px auto 0px auto";
+        document.body.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = "Login";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Username
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Email";
+        field.id = "username";
+        field.type = "text";
+
+        // Password
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Password";
+        field.id = "password";
+        field.type = "password";
+
+        // Login Button
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("button");
+        formGroup.appendChild(field);
+
+        field.className = "btn btn-default";
+        field.innerHTML = "Login";
+        field.onclick = function() {
+            field.setAttribute("disabled", true);
+            document.getElementById("username").setAttribute("disabled", true);
+            document.getElementById("password").setAttribute("disabled", true);
+            panelTitle.innerHTML = "Please wait..."
+
+            firebase.auth().signInWithEmailAndPassword(document.getElementById("username").value, document.getElementById("password").value).then(function() {
+                user = document.getElementById("username").value.split("@").join("_at_").split(".").join("_dot_");
+                retrieveAndRenderLog(user);
+            }, function(error) {
+                field.removeAttribute("disabled");
+                document.getElementById("username").removeAttribute("disabled");
+                document.getElementById("password").removeAttribute("disabled");
+                panelTitle.innerHTML = "Login";
+            });
+        }
+    }
+
+    function renderLog(log) {
+        // Clear Screen
+        document.body.innerHTML = "";
+        document.body.className = "container-fluid";
+        document.body.style.fontSize = "12px";
+
+        // Get Unique Categories
+        log.forEach(function(entry) {
+            categories[entry.category] = true;
+        });
+
+        // Page Header
+        pageHeader = document.createElement("div");
+        pageHeader.className = "page-header";
+        pageHeader.style.margin = "20px";
+        pageHeader.style.textAlign = "center";
+        document.body.appendChild(pageHeader);
+
+        h1 = document.createElement("h1");
+        h1.innerHTML = "Tactical Money Planning";
+        pageHeader.appendChild(h1);
+
+        // 2 Column View
+        splitView = document.createElement("div");
+        splitView.className = "row";
+        document.body.appendChild(splitView);
+
+        // Left View
+        leftView = document.createElement("div");
+        leftView.className = "col-md-6";
+        splitView.appendChild(leftView);
+
+        // Right View
+        rightView = document.createElement("div");
+        rightView.className = "col-md-6";
+        splitView.appendChild(rightView);
+
+        renderCurrentViewInContainerForLog(leftView, log);
+        renderMonthResultViewInContainerForLogWithDate(leftView, log, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1));
+        renderTransferTotalViewInContainerForLog(leftView, log);
+        renderTransactionFormInContainerForLog(rightView, log);
+        renderIncomingFormInContainerForLog(rightView, log);
+        renderTransferFormInContainerForLog(rightView, log);
+        renderTransactionListInContainerForLog(document.body, log);
+
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        document.body.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = new Date(Date.now()).getFullYear() + " Projections";
+        panelHeading.appendChild(panelTitle);
+
+        panelBodyParent = document.createElement("div");
+        panelBodyParent.className = "panel-body";
+        panel.appendChild(panelBodyParent);
+
+        for (i = 0; i < 12; i += 3) {
+            splitView = document.createElement("div");
+            splitView.className = "row";
+            panelBodyParent.appendChild(splitView);
+
+            // 1st View
+            view1 = document.createElement("div");
+            view1.className = "col-md-4";
+            splitView.appendChild(view1);
+
+            // 2nd View
+            view2 = document.createElement("div");
+            view2.className = "col-md-4";
+            splitView.appendChild(view2);
+
+            // 3rd View
+            view3 = document.createElement("div");
+            view3.className = "col-md-4";
+            splitView.appendChild(view3);
+
+            renderMonthResultViewInContainerForLogWithDate(view1, log, "2017-" + "0".repeat(2 - (i + 1).toString().length) + "" + (i + 1));
+            renderMonthResultViewInContainerForLogWithDate(view2, log, "2017-" + "0".repeat(2 - (i + 2).toString().length) + "" + (i + 2));
+            renderMonthResultViewInContainerForLogWithDate(view3, log, "2017-" + "0".repeat(2 - (i + 3).toString().length) + "" + (i + 3));
+        }
+    }
+
+    function renderCurrentViewInContainerForLog(container, log) {
+        // CURRENT VIEW
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = months[parseInt(new Date(Date.now()).getMonth() + 1)] + " " + new Date(Date.now()).getFullYear() + " - Current State";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Current View
+        table = document.createElement("table");
+        table.className = "table table-striped table-bordered";
+        panelBody.appendChild(table);
+
+        thead = document.createElement("thead");
+        table.appendChild(thead);
+
+        tr = document.createElement("tr");
+        thead.appendChild(tr);
+
+        th = document.createElement("th");
+        th.innerHTML = "Category";
+        tr.appendChild(th);
+
+        th = document.createElement("th");
+        th.innerHTML = "Available";
+        tr.appendChild(th);
+
+        tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+        // Category List
+        Object.keys(categories).sort().forEach(function(key) {
+            tr = document.createElement("tr");
+
+            availableBalance = calculateAvailaleBalanceForCategoryInLog(key, log);
+
+            if (roundToTwoDecimalPlaces(availableBalance) <= 0) {
+                return;
+            }
+
+            td = document.createElement("td");
+            td.innerHTML = key;
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            td.innerHTML = formatForDisplay(availableBalance);
+            tr.appendChild(td);
+
+            tbody.appendChild(tr);
+        });
+
+        // Available Balance
+        tr = document.createElement("tr");
+
+        td = document.createElement("td");
+        tr.appendChild(td);
+
+        td = document.createElement("td");
+        td.innerHTML = "<b>" + formatForDisplay(calculateAvailableBalanceForLog(log)) + "</br>";
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
+    }
+
+    function renderTransactionListInContainerForLog(container, log) {
+        // Transaction List
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = "Transaction List";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        table = document.createElement("table");
+        table.className = "table table-striped table-bordered";
+        panelBody.appendChild(table);
+
+        thead = document.createElement("thead");
+        table.appendChild(thead);
+
+        tr = document.createElement("tr");
+        thead.appendChild(tr);
+
+        th = document.createElement("th");
+        th.innerHTML = "Date";
+        tr.appendChild(th);
+        th = document.createElement("th");
+        th.innerHTML = "Action";
+        th.setAttribute("colspan", "3");
+        tr.appendChild(th);
+        th = document.createElement("th");
+        th.innerHTML = "Result";
+        tr.appendChild(th);
+        th = document.createElement("th");
+        th.innerHTML = "Reason";
+        tr.appendChild(th);
+        th = document.createElement("th");
+        th.innerHTML = "Actions";
+        th.setAttribute("colspan", "4");
+        tr.appendChild(th);
+
+        var tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+        currentdate = "";
+
+        log.forEach(function(entry, index) {
+            tr = document.createElement("tr");
+
+            if (currentdate.search(entry.date.split("-").slice(0, 2).join("-")) === -1) {
+                currentdate = entry.date;
+
+                td = document.createElement("td");
+                td.setAttribute("colspan", "11");
+                td.style.textAlign = "center";
+                td.style.fontSize = "20px";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                td.innerHTML = "<b>" + currentdate.split("-").slice(0, 2).join("-") + "</b>";
+                td.innerHTML = "<b>" + months[parseInt(currentdate.split("-")[1])] + " " + currentdate.split("-")[0] + "</b>";
+
+                tr = document.createElement("tr");
+            }
+
+            // Date
+            td = document.createElement("td");
+            td.innerHTML = entry.date;
+
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                td.setAttribute("rowspan", "2");
+                td.style.verticalAlign = "middle";
+            }
+
+            if (entry.type !== "Transfer" || entry.amount > 0) {
+                tr.appendChild(td);
+            }
+
+            // Icon
+            td = document.createElement("td");
+            td.style.textAlign = "center";
+            tr.appendChild(td);
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                // Add top margin
+                trt = document.createElement("tr");
+                tdt = document.createElement("td");
+                tdt.setAttribute("colspan", "11");
+                tdt.style.height = "5px";
+                tdt.style.padding = "0px";
+                tdt.style.margin = "0px";
+                trt.appendChild(tdt);
+                tbody.appendChild(trt);
+
+                td.innerHTML = '<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>';
+            }
+            if (entry.type === "Transfer" && entry.amount < 0) {
+                td.innerHTML = '<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>';
+            }
+            if (entry.type === "Transaction" && entry.amount < 0) {
+                td.innerHTML = '<span class="glyphicon glyphicon-usd" aria-hidden="true"></span><span class="glyphicon glyphicon-minus" aria-hidden="true"></span>';
+            }
+            if (entry.type === "Transaction" && entry.amount > 0) {
+                td.innerHTML = '<span class="glyphicon glyphicon-usd" aria-hidden="true"></span><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
+            }
+            tbody.appendChild(tr);
+
+            if (entry.type === "Transfer" && entry.amount < 0) {
+                if (log[index + 1] && log[index + 1].type !== "Transfer") {
+                    // Add bottom margin
+                    trt = document.createElement("tr");
+                    tdt = document.createElement("td");
+                    tdt.setAttribute("colspan", "11");
+                    tdt.style.height = "5px";
+                    tdt.style.padding = "0px";
+                    tdt.style.margin = "0px";
+                    trt.appendChild(tdt);
+                    tbody.appendChild(trt);
+                }
+            }
+
+            // Action
+            td = document.createElement("td");
+            tr.appendChild(td);
+            if (entry.amount > 0) {
+                td.innerHTML = formatForDisplay(entry.amount) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " into ";
+            } else {
+                td.innerHTML = formatForDisplay(Math.abs(entry.amount)) + (entry.approved ? " got " : " will get ") + (entry.type === "Transfer" ? "moved" : "paid") + " out of ";
+            }
+
+            td = document.createElement("td");
+            tr.appendChild(td);
+            td.innerHTML = entry.category;
+
+            // Result
+            balance = 0;
+            for (i = log.length - 1; i >= index; i--) {
+                if (entry.category === log[i].category) {
+                    balance += log[i].amount;
+                }
+            }
+            balance = Math.round(balance * 100) / 100;
+
+            previous = (balance - entry.amount);
+            previous = Math.round(previous * 100) / 100;
+
+            td = document.createElement("td");
+            tr.appendChild(td);
+            td.innerHTML = entry.category + (entry.approved ? " went " : " will go ") + "from " + formatForDisplay(previous) + " to " + formatForDisplay(balance);
+
+            if (entry.amount > 0 && entry.type === "Transaction") {
+                tr.className = "success";
+            }
+
+            if (entry.type === "Transfer") {
+                tr.className = "warning";
+            }
+
+            if (!entry.approved) {
+                tr.className = "info";
+            }
+
+            if (balance < 0) {
+                tr.className = "danger";
+            }
+
+            // Description
+            td = document.createElement("td");
+            td.innerHTML = entry.description;
+
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                td.setAttribute("rowspan", "2");
+                td.style.verticalAlign = "middle";
+            }
+
+            if (entry.type !== "Transfer" || entry.amount > 0) {
+                tr.appendChild(td);
+            }
+
+            // Approve Entry
+            td = document.createElement("td");
+            td.style.textAlign = "center";
+            td.innerHTML = entry.approved ? '<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>';
+            td.style.cursor = "pointer";
+
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                td.setAttribute("rowspan", "2");
+                td.style.verticalAlign = "middle";
+            }
+
+            if (entry.type !== "Transfer" || entry.amount > 0) {
+                tr.appendChild(td);
+            }
+
+            td.onclick = function() {
+                entry = log[index];
+                log[index].approved = !entry.approved;
+
+                if (entry.type === "Transfer" && entry.amount < 0) {
+                    log[index - 1].approved = !log[index - 1].approved;
+                }
+                if (entry.type === "Transfer" && entry.amount > 0) {
+                    log[index + 1].approved = !log[index + 1].approved;
+                }
+
+                saveLog(log);
+                renderLog(log);
+            }
+
+            // Remove Entry
+            td = document.createElement("td");
+            td.style.textAlign = "center";
+            td.innerHTML = '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>';
+            td.style.cursor = "pointer";
+
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                td.setAttribute("rowspan", "2");
+                td.style.verticalAlign = "middle";
+            }
+
+            if (entry.type !== "Transfer" || entry.amount > 0) {
+                tr.appendChild(td);
+            }
+
+            td.onclick = function() {
+                if (!window.confirm("Are you sure you want to remove this entry?")) {
+                    return;
+                }
+
+                entry = log[index];
+                log.splice(index, 1);
+
+                if (entry.type === "Transfer" && entry.amount < 0) {
+                    log.splice(index - 1, 1);
+                }
+                if (entry.type === "Transfer" && entry.amount > 0) {
+                    log.splice(index, 1);
+                }
+
+                saveLog(log);
+                renderLog(log);
+            }
+
+            // Move up
+            td = document.createElement("td");
+            td.style.textAlign = "center";
+            td.innerHTML = '<span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>';
+            td.style.cursor = "pointer";
+
+            if (entry.type === "Transfer" && entry.amount > 0) {
+                td.setAttribute("rowspan", "2");
+                td.style.verticalAlign = "middle";
+            }
+
+            if (entry.type !== "Transfer" || entry.amount > 0) {
+                tr.appendChild(td);
+            }
+
+            td.onclick = function() {
+                if (index - 1 < 0) {
+                    return;
+                }
+
+                entry = log[index];
+
+                if (entry.type === "Transfer" && entry.amount < 0 && index - 2 < 0) {
+                    return;
+                }
+
+                removeoffset = 1;
+
+                if (log[index - 1].type === "Transfer" && log[index - 1].amount < 0) {
+                    removeoffset = 2;
+                }
+
+                if (log[index - 1].type === "Transfer" && log[index - 1].amount > 0) {
+                    removeoffset = 2;
+                }
+
+                if (log[index - 1].type === "Transfer" && log[index - 1].amount > 0 && log[index - 2].type === "Transfer" && log[index - 2].amount < 0) {
+                    removeoffset = 3;
+                }
+
+                log.splice(index, 1);
+                log.splice(index - removeoffset, 0, entry);
+
+                if (entry.type === "Transfer" && entry.amount > 0) {
+                    entry2 = log[index + 1];
+                    log.splice(index + 1, 1);
+                    log.splice(index + 1 - removeoffset, 0, entry2);
+                }
+
+                if (entry.type === "Transfer" && entry.amount < 0) {
+                    entry2 = log[index];
+                    log.splice(index, 1);
+                    log.splice(index - removeoffset, 0, entry2);
+                }
+
+                saveLog(log);
+                renderLog(log);
+            }
+        });
+    }
+
+    function renderTransactionFormInContainerForLog(container, log) {
+        // TRANSACTION FORM
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = "Pay Money";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Date
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Date";
+        field.id = "date";
+        field.name = "date";
+        field.type = "text";
+
+        $("#date").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+
+        // Category
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Category";
+        field.id = "category";
+        field.name = "category";
+        field.type = "text";
+
+        $("#category").autocomplete({
+            source: Object.keys(categories).sort()
+        });
+
+        // Description
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Description";
+        field.id = "description";
+        field.name = "description";
+        field.type = "text";
+
+        // Amount
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        inputGroup = document.createElement("div");
+        inputGroup.className = "input-group";
+        formGroup.appendChild(inputGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Amount";
+        field.id = "amount";
+        field.name = "amount";
+        field.type = "text";
+
+        // Status
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        label = document.createElement("label");
+        formGroup.appendChild(label);
+
+        field = document.createElement("input");
+        field.type = "checkbox";
+        field.id = "approved";
+        label.appendChild(field);
+        label.innerHTML = label.innerHTML + " Approve";
+
+        // Button
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("button");
+        formGroup.appendChild(field);
+
+        field.className = "btn btn-default";
+        field.innerHTML = "Transact";
+        field.type = "submit";
+
+        field.onclick = function() {
+            entry = {
+                date: document.getElementById("date").value,
+                type: "Transaction",
+                category: document.getElementById("category").value,
+                description: document.getElementById("description").value,
+                amount: -Math.abs(parseFloat(document.getElementById("amount").value)),
+                approved: document.getElementById("approved").checked
+            };
+
+            timestamp = (new Date(entry.date).getTime() / 1000).toFixed(0);
+            index = log.findIndex(function(entry) {
+                return (new Date(entry.date).getTime() / 1000).toFixed(0) <= timestamp;
+            });
+
+            if (index === -1) {
+                index = log.length;
+            }
+
+            log.splice(index, 0, entry);
+            saveLog(log);
+            renderLog(log);
+        }
+    }
+
+    function renderTransferFormInContainerForLog(container, log) {
+        // TRANSFER FORM
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = "Move Money";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Date
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Date";
+        field.id = "datetransfer";
+        field.name = "datetransfer";
+        field.type = "text";
+
+        $("#datetransfer").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+
+        // Amount
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        inputGroup = document.createElement("div");
+        inputGroup.className = "input-group";
+        formGroup.appendChild(inputGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Amount";
+        field.id = "transferamount";
+        field.name = "amount";
+        field.type = "text";
+
+        // From Category
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "From Category";
+        field.id = "fromcategory";
+        field.name = "fromcategory";
+        field.type = "text";
+
+        $("#fromcategory").autocomplete({
+            source: Object.keys(categories).sort()
+        });
+
+        // To Category
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "To Category";
+        field.id = "tocategory";
+        field.name = "tocategory";
+        field.type = "text";
+
+        $("#tocategory").autocomplete({
+            source: Object.keys(categories).sort()
+        });
+
+        // Description
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Description";
+        field.id = "transferdescription";
+        field.type = "text";
+
+        // Status
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        label = document.createElement("label");
+        formGroup.appendChild(label);
+
+        field = document.createElement("input");
+        field.type = "checkbox";
+        field.id = "transferapproved";
+        label.appendChild(field);
+        label.innerHTML = label.innerHTML + " Approve";
+
+        // Button
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("button");
+        formGroup.appendChild(field);
+
+        field.className = "btn btn-default";
+        field.innerHTML = "Transfer";
+        field.type = "submit";
+
+        field.onclick = function() {
+            // Validation
+
+            entry1 = {
+                date: document.getElementById("datetransfer").value,
+                type: "Transfer",
+                category: document.getElementById("fromcategory").value,
+                description: document.getElementById("transferdescription").value,
+                amount: -1 * parseFloat(document.getElementById("transferamount").value),
+                approved: document.getElementById("transferapproved").checked
+            };
+
+            entry2 = {
+                date: document.getElementById("datetransfer").value,
+                type: "Transfer",
+                category: document.getElementById("tocategory").value,
+                description: document.getElementById("transferdescription").value,
+                amount: parseFloat(document.getElementById("transferamount").value),
+                approved: document.getElementById("transferapproved").checked
+            };
+
+            timestamp = (new Date(entry1.date).getTime() / 1000).toFixed(0);
+            index = log.findIndex(function(entry) {
+                return (new Date(entry.date).getTime() / 1000).toFixed(0) <= timestamp;
+            });
+
+            if (index === -1) {
+                index = log.length;
+            }
+
+            log.splice(index, 0, entry1);
+            log.splice(index, 0, entry2);
+            saveLog(log);
+            renderLog(log);
+        }
+    }
+
+    function renderIncomingFormInContainerForLog(container, log) {
+        // INCOMING FORM
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = "Receive Money";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Date
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Date";
+        field.id = "incomingdate";
+        field.name = "date";
+        field.type = "text";
+
+        $("#incomingdate").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+
+        // Category
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Category";
+        field.id = "incomingcategory";
+        field.name = "category";
+        field.type = "text";
+
+        $("#incomingcategory").autocomplete({
+            source: Object.keys(categories).sort()
+        });
+
+        // Description
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Description";
+        field.id = "incomingdescription";
+        field.name = "description";
+        field.type = "text";
+
+        // Amount
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        inputGroup = document.createElement("div");
+        inputGroup.className = "input-group";
+        formGroup.appendChild(inputGroup);
+
+        field = document.createElement("input");
+        formGroup.appendChild(field);
+
+        field.className = "form-control";
+        field.placeholder = "Amount";
+        field.id = "incomingamount";
+        field.name = "amount";
+        field.type = "text";
+
+        // Status
+        row = document.createElement("div");
+        row.className = "row";
+        panelBody.appendChild(row);
+
+        col6 = document.createElement("div");
+        col6.className = "col-md-6";
+        row.appendChild(col6);
+
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        col6.appendChild(formGroup);
+
+        label = document.createElement("label");
+        formGroup.appendChild(label);
+
+        field = document.createElement("input");
+        field.type = "checkbox";
+        field.id = "incomingapproved";
+        label.appendChild(field);
+        label.innerHTML = label.innerHTML + " Approve";
+
+        // Button
+        formGroup = document.createElement("div");
+        formGroup.className = "form-group";
+        panelBody.appendChild(formGroup);
+
+        field = document.createElement("button");
+        formGroup.appendChild(field);
+
+        field.className = "btn btn-default";
+        field.innerHTML = "Transact";
+        field.type = "submit";
+
+        field.onclick = function() {
+            entry = {
+                date: document.getElementById("incomingdate").value,
+                type: "Transaction",
+                category: document.getElementById("incomingcategory").value,
+                description: document.getElementById("incomingdescription").value,
+                amount: Math.abs(parseFloat(document.getElementById("incomingamount").value)),
+                approved: document.getElementById("incomingapproved").checked
+            };
+
+            timestamp = (new Date(entry.date).getTime() / 1000).toFixed(0);
+            index = log.findIndex(function(entry) {
+                return (new Date(entry.date).getTime() / 1000).toFixed(0) <= timestamp;
+            });
+
+            if (index === -1) {
+                index = log.length;
+            }
+
+            log.splice(index, 0, entry);
+            saveLog(log);
+            renderLog(log);
+        }
+    }
+
+    function renderMonthResultViewInContainerForLogWithDate(container, log, date) {
+        // CURRENT VIEW
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = months[parseInt(date.split("-")[1]) + 1] + " " + ((parseInt(date.split("-")[1]) + 1) == 13 ? (parseInt(date.split("-")[0]) + 1) : date.split("-")[0]) + " - Projection";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Current View
+        table = document.createElement("table");
+        table.className = "table table-striped table-bordered";
+        panelBody.appendChild(table);
+
+        thead = document.createElement("thead");
+        table.appendChild(thead);
+
+        tr = document.createElement("tr");
+        thead.appendChild(tr);
+
+        th = document.createElement("th");
+        th.innerHTML = "Category";
+        tr.appendChild(th);
+
+        th = document.createElement("th");
+        th.innerHTML = "TOTAL";
+        tr.appendChild(th);
+
+        tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+        log = log.slice(Math.max(0, log.findIndex(function(entry) {
+            return entry.date.search(date) != -1;
+        })), log.length);
+
+        monthlog = log.filter(function(entry) {
+            return entry.date.search(date) != -1;
+        });
+
+        Object.keys(categories).sort().forEach(function(key) {
+            tr = document.createElement("tr");
+
+            if (roundToTwoDecimalPlaces(calculateTotalBalanceForCategoryInLog(key, log)) <= 0) {
+                return;
+            }
+
+            td = document.createElement("td");
+            td.innerHTML = key;
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            tr.appendChild(td);
+            td.innerHTML = formatForDisplay(calculateTotalBalanceForCategoryInLog(key, log));
+
+            tbody.appendChild(tr);
+        });
+
+        // Available Balance
+        tr = document.createElement("tr");
+
+        td = document.createElement("td");
+        tr.appendChild(td);
+
+        td = document.createElement("td");
+        td.innerHTML = "<b>" + formatForDisplay(calculateLogSum(log)) + "</br>";
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
+    }
+
+    function renderTransferTotalViewInContainerForLog(container, log) {
+        // CURRENT VIEW
+        panel = document.createElement("div");
+        panel.className = "panel panel-default";
+        container.appendChild(panel);
+
+        panelHeading = document.createElement("div");
+        panelHeading.className = "panel-heading";
+        panel.appendChild(panelHeading);
+
+        panelTitle = document.createElement("h3");
+        panelTitle.className = "panel-title";
+        panelTitle.innerHTML = months[parseInt(new Date(Date.now()).getMonth() + 1)] + " " + new Date(Date.now()).getFullYear() + " - Transfer Total";
+        panelHeading.appendChild(panelTitle);
+
+        panelBody = document.createElement("div");
+        panelBody.className = "panel-body";
+        panel.appendChild(panelBody);
+
+        // Current View
+        table = document.createElement("table");
+        table.className = "table table-striped table-bordered";
+        panelBody.appendChild(table);
+
+        thead = document.createElement("thead");
+        table.appendChild(thead);
+
+        tr = document.createElement("tr");
+        thead.appendChild(tr);
+
+        th = document.createElement("th");
+        th.innerHTML = "Category";
+        tr.appendChild(th);
+
+        th = document.createElement("th");
+        th.innerHTML = "Total";
+        tr.appendChild(th);
+
+        tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+        // Category List
+        Object.keys(categories).sort().forEach(function(key) {
+            tr = document.createElement("tr");
+
+            availableBalance = calculateMonthTransferTotalForCategoryInLog(key, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1), log);
+
+            if (roundToTwoDecimalPlaces(availableBalance) <= 0) {
+                return;
+            }
+
+            td = document.createElement("td");
+            td.innerHTML = key;
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            td.innerHTML = formatForDisplay(availableBalance);
+            tr.appendChild(td);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    renderLoginScreen();
+</script>
+
+</html>
