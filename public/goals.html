@@ -50,7 +50,44 @@
             var chart = new google.visualization.PieChart(document.getElementById('chart1'));
             chart.draw(data, options);
 
-            // 2 Positive Balance Sheet
+            // 2 Positive Balance Sheet 1
+            var data = google.visualization.arrayToDataTable([
+                ['Part', 'Amount'],
+                ['Goal', 4860],
+                ['Current', 607.50]
+            ]);
+
+            var options = {
+                pieHole: 0.4,
+                pieSliceText: 'label',
+                legend: {
+                    position: "none"
+                },
+                slices: {
+                    0: {
+                        color: "#ff9500"
+                    },
+                    1: {
+                        offset: 0.05,
+                        color: "#4cd964"
+                    },
+                },
+                pieSliceTextStyle: {
+                    color: 'black',
+                },
+                pieStartAngle: 45,
+                chartArea: {
+                    left: 15,
+                    top: 15,
+                    width: '90%',
+                    height: '90%'
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart2.1'));
+            chart.draw(data, options);
+
+            // 2 Positive Balance Sheet 2
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
                 ['Goal', 159563.34],
@@ -84,7 +121,7 @@
                 }
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('chart2'));
+            var chart = new google.visualization.PieChart(document.getElementById('chart2.2'));
             chart.draw(data, options);
 
             // 3 Full Emergency Fund
@@ -328,12 +365,22 @@
             </div>
             <div class="col-md-4">
                 <div class="panel panel-info">
-                    <div class="panel-heading">Positive Balance Sheet (R160,000.00) - In Progress</div>
+                    <div class="panel-heading">Positive Balance Sheet 1 (R4,860.00) - In Progress</div>
                     <div class="panel-body">
-                        <div id="chart2" style="width: 300px; height: 300px; margin: auto;"></div>
+                        <div id="chart2.1" style="width: 300px; height: 300px; margin: auto;"></div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Positive Balance Sheet 2 (R160,000.00) - In Progress</div>
+                    <div class="panel-body">
+                        <div id="chart2.2" style="width: 300px; height: 300px; margin: auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-warning">
                     <div class="panel-heading">Full Emergency Fund (R140,000.00)</div>
@@ -342,8 +389,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-warning">
                     <div class="panel-heading">15% Retirement (15%pm)</div>
@@ -360,6 +405,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-warning">
                     <div class="panel-heading">House Fund (R5,000,000.00)</div>
@@ -368,8 +415,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-warning">
                     <div class="panel-heading">Give Away (90%pm)</div>
