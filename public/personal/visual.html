@@ -66,58 +66,58 @@
 
         function drawCharts() {
             drawChart(document.getElementById("sankey_basic2"), [
-                [10000, "#5ae2ba", "Car Debt"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientLiquidDebt)", "Car Debt"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic3"), [
                 [10000, "#5ae2ba", "House Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic4"), [
-                [10000, "#5ae2ba", "Chalet Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientInvestment)", "Chalet Fund"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic5"), [
                 [10000, "#5ae2ba", "Birthday Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic6"), [
-                [10000, "#5ae2ba", "Car Debt"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientLiquidDebt)", "Car Debt"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic7"), [
-                [10000, "#5ae2ba", "Car Debt"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientLiquidDebt)", "Car Debt"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic8"), [
-                [10000, "#5ae2ba", "Car Debt"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientLiquidDebt)", "Car Debt"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic9"), [
-                [10000, "#5ae2ba", "Birthday Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientLiquidDebt)", "Birthday Fund"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic10"), [
                 [10000, "#5ae2ba", "Christmas Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic11"), [
                 [10000, "#5ae2ba", "Holiday Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
 
             drawChart(document.getElementById("sankey_basic12"), [
-                [10000, "#5ae2ba", "Holiday Fund"],
-                [549, "#5ae2ba", "Car Debt"]
+                [10000, "url(#gradientLiquidDebt)", "Car Debt"],
+                [549, "url(#gradientLiquidDebt)", "Car Debt"]
             ]);
         }
 
@@ -205,6 +205,36 @@
             stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
             stop.setAttribute("offset", "55%");
             stop.setAttribute("stop-color", "rgb(255, 149, 0)");
+            linearGradient.appendChild(stop);
+
+
+            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+            linearGradient.setAttribute("id", "gradientLiquidDebt");
+            defs.appendChild(linearGradient);
+
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "5%");
+            stop.setAttribute("stop-color", "#5ae2ba");
+            linearGradient.appendChild(stop);
+
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "55%");
+            stop.setAttribute("stop-color", "rgb(255, 59, 48)");
+            linearGradient.appendChild(stop);
+
+
+            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+            linearGradient.setAttribute("id", "gradientInvestment");
+            defs.appendChild(linearGradient);
+
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "5%");
+            stop.setAttribute("stop-color", "#5ae2ba");
+            linearGradient.appendChild(stop);
+
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "55%");
+            stop.setAttribute("stop-color", "rgb(90, 200, 250)");
             linearGradient.appendChild(stop);
 
             // Graph Properties
