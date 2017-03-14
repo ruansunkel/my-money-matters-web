@@ -241,26 +241,11 @@
                         chart.appendChild(createCurve(x0 - 0.5, y0 + value / 2, x1, y1 + value / 2, value, grandChild[1]));
 
                         if (index + 1 >= nodes.length) {
-                            text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                            text.setAttribute("x", x1 + 10);
-                            text.setAttribute("y", y1 + value / 2 + 4.0);
-                            text.setAttribute("font-size", "12px");
-                            text.innerHTML = grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")";
-                            chart.appendChild(text);
+                            chart.appendChild(drawText(x1 + 10, y1 + value / 2 + 4.0, grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")"));
                         } else if (index == 0) {
-                            text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                            text.setAttribute("x", x0 + 10);
-                            text.setAttribute("y", y0 + value / 2 + 5.5);
-                            text.setAttribute("font-size", "12px");
-                            text.innerHTML = grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")";
-                            chart.appendChild(text);
+                            chart.appendChild(drawText(x0 + 10, y0 + value / 2 + 5.5, grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")"));
                         } else {
-                            text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                            text.setAttribute("x", x0 + 20);
-                            text.setAttribute("y", y0 + value / 2 + 5.5);
-                            text.setAttribute("font-size", "12px");
-                            text.innerHTML = grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")";
-                            chart.appendChild(text);
+                            chart.appendChild(drawText(x0 + 20, y0 + value / 2 + 5.5, grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")"));
                         }
 
                         if ((index + 1 < nodes.length && childIndex < nodes[index + 1].length && nodes[index + 1].length > 1) || (index + 1 >= nodes.length)) {
@@ -297,6 +282,15 @@
                 rect.setAttribute("height", h);
                 rect.style.fill = fill;
                 return rect;
+            }
+
+            function drawText(x, y, value) {
+                text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", x);
+                text.setAttribute("y", y);
+                text.setAttribute("font-size", "12px");
+                text.innerHTML = value;
+                return text;
             }
 
             function calculateMaxNodeSum(nodes) {
