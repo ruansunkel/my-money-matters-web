@@ -82,9 +82,6 @@
         }
 
         function drawCharts(root) {
-
-
-
             // March
             drawChart(createPanel(root, "March 2017"), nodes, [
                 [10000, "url(#gradientLiquidDebt)", "DEBT"],
@@ -96,7 +93,6 @@
                 [10000, "#5ae2ba", "House Fund"],
                 [549, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
-
 
             // May
             drawChart(createPanel(root, "May 2017"), nodes, [
@@ -151,6 +147,22 @@
             ]);
         }
 
+        function createLinearGradient(root, id, startColor, endColor) {
+            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+            linearGradient.setAttribute("id", id);
+            root.appendChild(linearGradient);
+
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "0%");
+            stop.setAttribute("stop-color", startColor);
+            linearGradient.appendChild(stop);
+
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "70%");
+            stop.setAttribute("stop-color", endColor);
+            linearGradient.appendChild(stop);
+        }
+
         function sankey(root, nodes, width, height) {
             // Create Graph
             chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -162,110 +174,13 @@
             defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
             chart.appendChild(defs);
 
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientFixed");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "0%");
-            stop.setAttribute("stop-color", "#5ae2ba");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "70%");
-            stop.setAttribute("stop-color", "#fc6428");
-            linearGradient.appendChild(stop);
-
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientLiving");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "0%");
-            stop.setAttribute("stop-color", "#5ae2ba");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "70%");
-            stop.setAttribute("stop-color", "#47e54a");
-            linearGradient.appendChild(stop);
-
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientDebt");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "5%");
-            stop.setAttribute("stop-color", "#fc6428");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "55%");
-            stop.setAttribute("stop-color", "rgb(255, 59, 48)");
-            linearGradient.appendChild(stop);
-
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientImportant");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "5%");
-            stop.setAttribute("stop-color", "#fc6428");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "55%");
-            stop.setAttribute("stop-color", "rgb(255, 149, 0)");
-            linearGradient.appendChild(stop);
-
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientNotSoImportant");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "5%");
-            stop.setAttribute("stop-color", "#fc6428");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "55%");
-            stop.setAttribute("stop-color", "rgb(255, 149, 0)");
-            linearGradient.appendChild(stop);
-
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientLiquidDebt");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "5%");
-            stop.setAttribute("stop-color", "#5ae2ba");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "55%");
-            stop.setAttribute("stop-color", "rgb(255, 59, 48)");
-            linearGradient.appendChild(stop);
-
-
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", "gradientInvestment");
-            defs.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "5%");
-            stop.setAttribute("stop-color", "#5ae2ba");
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "55%");
-            stop.setAttribute("stop-color", "rgb(90, 200, 250)");
-            linearGradient.appendChild(stop);
+            createLinearGradient(defs, "gradientFixed", "#5ae2ba", "#fc6428");
+            createLinearGradient(defs, "gradientLiving", "#5ae2ba", "#47e54a");
+            createLinearGradient(defs, "gradientDebt", "#fc6428", "rgb(255, 59, 48)");
+            createLinearGradient(defs, "gradientImportant", "#fc6428", "rgb(255, 149, 0)");
+            createLinearGradient(defs, "gradientNotSoImportant", "#fc6428", "rgb(255, 149, 0)");
+            createLinearGradient(defs, "gradientLiquidDebt", "#5ae2ba", "rgb(255, 59, 48)");
+            createLinearGradient(defs, "gradientInvestment", "#5ae2ba", "rgb(90, 200, 250)");
 
             // Graph Properties
             graphWidth = chart.clientWidth - 160;
