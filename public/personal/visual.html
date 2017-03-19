@@ -303,16 +303,6 @@
                     child.forEach(function(grandChild, grandChildIndex) {
                         value = grandChild[0] * scalingFactor;
 
-                        // Draw Start Caps
-                        if (index == 0) {
-                            chart.appendChild(drawRect(x0 - 2, y0, 2, value, "#9c9e9d"));
-                        }
-
-                        // Draw End Caps
-                        if ((index + 1 >= nodes.length)) {
-                            chart.appendChild(drawRect(x1, y1, 2, value, "#9c9e9d"));
-                        }
-
                         chart.appendChild(createCurve(x0 - 0.5, y0 + value / 2, x1, y1 + value / 2, value, grandChild[1]));
 
                         if (index + 1 >= nodes.length) {
