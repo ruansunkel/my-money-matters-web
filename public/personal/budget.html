@@ -332,7 +332,6 @@
 
         renderCurrentViewInContainerForLog(leftView, log);
         renderMonthResultViewInContainerForLogWithDate(leftView, log, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1));
-        renderTransferTotalViewInContainerForLog(leftView, log);
         renderTransactionFormInContainerForLog(rightView, log);
         renderIncomingFormInContainerForLog(rightView, log);
         renderTransferFormInContainerForLog(rightView, log);
@@ -379,6 +378,8 @@
             renderMonthResultViewInContainerForLogWithDate(view2, log, "2017-" + "0".repeat(2 - (i + 2).toString().length) + "" + (i + 2));
             renderMonthResultViewInContainerForLogWithDate(view3, log, "2017-" + "0".repeat(2 - (i + 3).toString().length) + "" + (i + 3));
         }
+
+        renderTransferTotalViewInContainerForLog(document.body, log);
     }
 
     function renderCurrentViewInContainerForLog(container, log) {
@@ -1430,10 +1431,6 @@
             tr = document.createElement("tr");
 
             availableBalance = calculateMonthTransferTotalForCategoryInLog(key, new Date(Date.now()).getFullYear() + "-" + "0".repeat(2 - (new Date(Date.now()).getMonth() + 1).toString().length) + (new Date(Date.now()).getMonth() + 1), log);
-
-            if (roundToTwoDecimalPlaces(availableBalance) <= 0) {
-                return;
-            }
 
             td = document.createElement("td");
             td.innerHTML = key;
