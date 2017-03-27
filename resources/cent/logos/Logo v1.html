@@ -1,0 +1,57 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {
+            packages: ["corechart"]
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['1', 55],
+                ['2', 100],
+                ['3', 100],
+                ['4', 105]
+            ]);
+
+            var options = {
+                title: '',
+                pieSliceText: 'none',
+                pieHole: 0.2,
+                pieStartAngle: 20,
+                legend: 'none',
+                slices: {
+                    1: {
+                        color: "rgb(0, 122, 255)"
+                    },
+                    0: {
+                        offset: 0.2,
+                        color: "rgb(76, 217, 100)"
+                    },
+                    2: {
+                        offset: 0.2,
+                        color: "rgb(0, 122, 255)"
+                    },
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+
+            google.visualization.events.addListener(chart, 'ready', function() {
+                document.getElementById("img").innerHTML = '<img src="' + chart.getImageURI() + '">';
+            });
+
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body style="margin: 0; padding: 0;">
+    <div id="img"></div>
+    <div id="donutchart" style="width: 1000px; height: 1000px;border: 1px dotted lightgray"></div>
+</body>
+
+</html>
