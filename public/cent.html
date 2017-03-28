@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Tactical Money Planning</title>
+    <title>Cent</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
@@ -211,14 +211,16 @@
         document.body.innerHTML = "";
 
         pageHeader = document.createElement("div");
-        pageHeader.className = "page-header";
+        //pageHeader.className = "page-header";
         pageHeader.style.margin = "20px";
         pageHeader.style.textAlign = "center";
         document.body.appendChild(pageHeader);
 
-        h1 = document.createElement("h1");
-        h1.innerHTML = "Tactical Money Planning";
-        pageHeader.appendChild(h1);
+        logo = document.createElement("img");
+        logo.src = "images/cent/logo_250x250.png";
+        logo.style.width = "120px";
+        logo.style.height = "120px";
+        pageHeader.appendChild(logo);
 
         panel = document.createElement("div");
         panel.className = "panel panel-default";
