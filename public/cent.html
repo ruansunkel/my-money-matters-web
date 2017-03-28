@@ -308,14 +308,16 @@
 
         // Page Header
         pageHeader = document.createElement("div");
-        pageHeader.className = "page-header";
+        //pageHeader.className = "page-header";
         pageHeader.style.margin = "20px";
-        pageHeader.style.textAlign = "center";
+        //pageHeader.style.textAlign = "center";
         document.body.appendChild(pageHeader);
 
-        h1 = document.createElement("h1");
-        h1.innerHTML = "Tactical Money Planning";
-        pageHeader.appendChild(h1);
+        logo = document.createElement("img");
+        logo.src = "images/cent/logo_250x250.png";
+        logo.style.width = "120px";
+        logo.style.height = "120px";
+        pageHeader.appendChild(logo);
 
         // 2 Column View
         splitView = document.createElement("div");
