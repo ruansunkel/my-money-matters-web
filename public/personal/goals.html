@@ -17,8 +17,8 @@
             // 1 Emergency Fund
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 10000],
                 ['Goal', 0],
-                ['Current', 10000]
             ]);
 
             var options = {
@@ -29,13 +29,14 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
-                pieStartAngle: 45,
+                pieStartAngle: 0,
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
@@ -53,8 +54,9 @@
             // 2 Positive Balance Sheet 1
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
-                ['Goal', 4252.50],
-                ['Current', 607.50]
+                ['Current', 607.50],
+                ['Current', 607.50],
+                ['Goal', 3645],
             ]);
 
             var options = {
@@ -65,17 +67,21 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
+                        offset: 0.05,
+                        color: "#4cd964"
                     },
                     1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    2: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 45,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -90,8 +96,10 @@
             // 2 Positive Balance Sheet 2
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 436.66],
+                ['Current', 4078.50],
+                ['Current', 8000],
                 ['Goal', 159563.34],
-                ['Current', 436.66]
             ]);
 
             var options = {
@@ -102,17 +110,26 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
+                        offset: 0.05,
+                        color: "#4cd964"
                     },
                     1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    2: {
+                        offset: 0.05,
+                        color: "green"
+                    },
+                    3: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 45,
+                // pieStartAngle: 45,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -127,8 +144,8 @@
             // 3 Full Emergency Fund
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 0],
                 ['Goal', 140000],
-                ['Current', 0]
             ]);
 
             var options = {
@@ -139,16 +156,17 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 45,
+                // pieStartAngle: 45,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -163,8 +181,8 @@
             // 4 15% Retirement
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 3.5],
                 ['Goal', 15],
-                ['Current', 3.5]
             ]);
 
             var options = {
@@ -175,17 +193,18 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 90,
+                // pieStartAngle: 90,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -200,8 +219,8 @@
             // 5 Full Emergency Fund
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 0],
                 ['Goal', 200000],
-                ['Current', 0]
             ]);
 
             var options = {
@@ -212,17 +231,18 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 90,
+                pieStartAngle: 0,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -237,8 +257,8 @@
             // 6 House Fund
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 0],
                 ['Goal', 5000000],
-                ['Current', 0]
             ]);
 
             var options = {
@@ -249,17 +269,18 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 90,
+                pieStartAngle: 0,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -274,8 +295,8 @@
             // 7 Give Away
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 0.23],
                 ['Goal', 90],
-                ['Current', 0.23]
             ]);
 
             var options = {
@@ -286,17 +307,18 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 45,
+                pieStartAngle: 0,
                 chartArea: {
                     left: 15,
                     top: 15,
@@ -311,8 +333,8 @@
             // 8 Income Generating Investment
             var data = google.visualization.arrayToDataTable([
                 ['Part', 'Amount'],
+                ['Current', 0],
                 ['Goal', 10000000],
-                ['Current', 0]
             ]);
 
             var options = {
@@ -323,17 +345,18 @@
                 },
                 slices: {
                     0: {
-                        color: "#ff9500"
-                    },
-                    1: {
                         offset: 0.05,
                         color: "#4cd964"
                     },
+                    1: {
+                        color: "#ff9500"
+                    },
                 },
+                pieSliceText: "none",
                 pieSliceTextStyle: {
                     color: 'black',
                 },
-                pieStartAngle: 45,
+                pieStartAngle: 0,
                 chartArea: {
                     left: 15,
                     top: 15,
