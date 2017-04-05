@@ -32,7 +32,7 @@
                 [
                     [21892.82, "url(#gradientFixed)", "Fixed Expences"],
                     [11275.95, "url(#gradientLiving)", "Living Expences"],
-                    [10549.00, "#5ae2ba", "Goals"],
+                    [10000.00, "#5ae2ba", "Goals"],
                 ]
             ],
             [
@@ -83,76 +83,61 @@
 
         function drawCharts(root) {
             // March
+            nodeList = nodes.slice();
+            nodeList[2][0][0][0] += 549;
+            nodeList[1][0][0][0] += 549;
             drawChart(createPanel(root, "March 2017", "success"), nodes, [
                 [10000, "url(#gradientLiquidDebt)", "DEBT"],
-                [549, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // April
-            nodeList = nodes.slice();
-            nodeList[2][0][0][0] -= 248.59;
-            nodeList[1][0][0][0] -= 248.59;
-            nodeList[1][0][2][0] += 248.59;
-            nodeList[2][2][1][0] += 248.59;
             drawChart(createPanel(root, "April 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "House Fund"],
-                [797.59, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // May
             drawChart(createPanel(root, "May 2017", "info"), nodeList, [
                 [10000, "url(#gradientInvestment)", "Chalet Fund"],
-                [797.59, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // June
             drawChart(createPanel(root, "June 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "Birthday Fund"],
-                [797.59, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
             // July
             drawChart(createPanel(root, "July 2017", "info"), nodeList, [
                 [10000, "url(#gradientLiquidDebt)", "DEBT"],
-                [797.59, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
             // August
             drawChart(createPanel(root, "August 2017", "info"), nodeList, [
                 [10000, "url(#gradientLiquidDebt)", "DEBT"],
-                [797.59, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // September
-            //nodeList = nodes.slice();
-            nodeList[1][0][0][0] -= 607.50;
-            nodeList[1][0][2][0] += 607.50;
+            nodeList[2][0][0][0] += 607.50;
             nodeList[2][0].splice(1, 1);
-
             drawChart(createPanel(root, "September 2017", "info"), nodeList, [
                 [10000, "url(#gradientLiquidDebt)", "DEBT"],
-                [1405.09, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // October
             drawChart(createPanel(root, "October 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "Birthday Fund"],
-                [1405.09, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // November
             drawChart(createPanel(root, "November 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "Christmas Fund"],
-                [1405.09, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // December
             drawChart(createPanel(root, "December 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "Holiday Fund"],
-                [1405.09, "url(#gradientLiquidDebt)", "DEBT"]
             ]);
 
             // January
-            nodeList[1][0][0][0] -= 3829.91;
-            nodeList[1][0][2][0] += 3829.91;
+            nodeList[1][0][0][0] -= 5235;
+            nodeList[1][0][2][0] += 5235;
             nodeList[2][0].splice(0, 1);
 
             drawChart(createPanel(root, "January 2018", "info"), nodes, [
