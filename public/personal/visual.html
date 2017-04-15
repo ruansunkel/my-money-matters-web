@@ -22,10 +22,10 @@
         nodes = [
             [
                 [
-                    [32062.77, "#5ae2ba", "Pfortner"]
+                    [32062.77, "#5ae2ba", "Stream 1"]
                 ],
                 [
-                    [11655, "#5ae2ba", "Young Engineers"]
+                    [11655, "#5ae2ba", "Stream 2"]
                 ]
             ],
             [
@@ -91,6 +91,9 @@
             ]);
 
             // April
+            nodeList[0][0][0][0] += 1937.23;
+            nodeList[2][0][0][0] += 1937.23;
+            nodeList[1][0][0][0] += 1937.23;
             drawChart(createPanel(root, "April 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "House Fund"],
             ]);
@@ -136,8 +139,8 @@
             ]);
 
             // January
-            nodeList[1][0][0][0] -= 5235;
-            nodeList[1][0][2][0] += 5235;
+            nodeList[1][0][0][0] -= 7172.23;
+            nodeList[1][0][2][0] += 7172.23;
             nodeList[2][0].splice(0, 1);
 
             drawChart(createPanel(root, "January 2018", "info"), nodes, [
