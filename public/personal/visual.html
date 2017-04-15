@@ -65,20 +65,17 @@
         }
 
         function createPanel(root, title, context) {
-            panel = document.createElement("div");
-            panel.className = "panel panel-" + context;
-            root.appendChild(panel);
-
             panelHeading = document.createElement("div");
-            panelHeading.className = "panel-heading";
-            panelHeading.innerHTML = title;
-            panel.appendChild(panelHeading);
+            root.appendChild(panelHeading);
+
+            heading = document.createElement("h3");
+            heading.innerHTML = title;
+            panelHeading.appendChild(heading);
 
             panelBody = document.createElement("div");
-            panelBody.className = "panel-body";
-            panel.appendChild(panelBody);
+            root.appendChild(panelBody);
 
-            return panelBody;
+            return root;
         }
 
         function drawCharts(root) {
@@ -385,6 +382,8 @@
         <div class="page-header">
             <h1><img src="https://www.mymoneymatters.co.za/images/cent/logo_250x250.png" style="width: 100px" />Visual Money Flow</h1>
         </div>
+
+        <p>Tracking is the single most important step of budgeting. The result of tracking is absolute clarity about where your money goes. Use the Cent App for day to day tracking.</p>
     </div>
 
     <script type="text/javascript">
