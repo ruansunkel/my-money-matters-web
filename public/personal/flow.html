@@ -37,6 +37,9 @@
             defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
             chart.appendChild(defs);
 
+            // Color Definitions
+            baseColor = "#5ae2ba";
+
             // Set up indices
             x1 = 20;
             x2 = x1 + 100;
@@ -50,7 +53,7 @@
                 entry = list[i];
 
                 // Draw indicator lines
-                chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+                chart.appendChild(bezier(x1 - 0.5, 50, x1 + 1, 50, baseColor, 30));
                 text = drawText(x1, 30, entry.date);
                 chart.appendChild(text);
                 bbox = text.getBBox();
@@ -77,12 +80,12 @@
                     if (entry.type === "Transaction" && element === entry.category && amount > 0) {
                         y1 = calculateY(list, i, categories, element);
                         y3 = calculateY(list, i + 1, categories, element);
-                        chart.appendChild(bezier(x1 + 150, y3, x3, y3, "#5ac8fa", amount / scalingFactor, "#aae2ba"));
+                        chart.appendChild(bezier(x1 + 150, y3, x3, y3, "#5ac8fa", amount / scalingFactor, baseColor));
 
                         oldAmount = calculateCategoryTotal(list, i, element);
                         if (oldAmount > 0) {
-                            chart.appendChild(bezier(x1, y1, x2 + 30, y1 + amount / scalingFactor + 2, "#aae2ba", oldAmount / scalingFactor));
-                            chart.appendChild(bezier(x2 + 30, y1 + amount / scalingFactor + 2, x3, y3 + amount / scalingFactor, "#aae2ba", oldAmount / scalingFactor));
+                            chart.appendChild(bezier(x1, y1, x2 + 30, y1 + amount / scalingFactor + 2, baseColor, oldAmount / scalingFactor));
+                            chart.appendChild(bezier(x2 + 30, y1 + amount / scalingFactor + 2, x3, y3 + amount / scalingFactor, baseColor, oldAmount / scalingFactor));
                         }
 
                         return;
@@ -92,12 +95,12 @@
                     if (entry.type === "Transaction" && element === entry.category && amount < 0) {
                         y1 = calculateY(list, i, categories, element);
                         y3 = calculateY(list, i + 1, categories, element);
-                        chart.appendChild(bezier(x1, y1, x3 - 150, y3, "#aae2ba", Math.abs(amount) / scalingFactor, "red"));
+                        chart.appendChild(bezier(x1, y1, x3 - 150, y3, baseColor, Math.abs(amount) / scalingFactor, "red"));
 
                         newAmount = calculateCategoryTotal(list, i + 1, element);
                         if (newAmount > 0) {
-                            chart.appendChild(bezier(x1, y1 + Math.abs(amount) / scalingFactor, x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, "#aae2ba", newAmount / scalingFactor));
-                            chart.appendChild(bezier(x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, x3, y3, "#aae2ba", newAmount / scalingFactor));
+                            chart.appendChild(bezier(x1, y1 + Math.abs(amount) / scalingFactor, x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, baseColor, newAmount / scalingFactor));
+                            chart.appendChild(bezier(x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, x3, y3, baseColor, newAmount / scalingFactor));
                         }
 
                         return;
@@ -111,7 +114,7 @@
                         if (oldAmount > 0) {
                             y1 = calculateY(list, i, categories, element);
                             y3 = calculateY(list, i + 1, categories, element);
-                            chart.appendChild(bezier(x1, y1, x3, y3, "#aae2ba", oldAmount / scalingFactor));
+                            chart.appendChild(bezier(x1, y1, x3, y3, baseColor, oldAmount / scalingFactor));
                         }
                     }
 
@@ -120,7 +123,7 @@
                         if (oldAmount > 0) {
                             y1 = calculateY(list, i, categories, element);
                             y3 = calculateY(list, i + 2, categories, element);
-                            chart.appendChild(bezier(x1, y1, x3, y3, "#aae2ba", oldAmount / scalingFactor));
+                            chart.appendChild(bezier(x1, y1, x3, y3, baseColor, oldAmount / scalingFactor));
                         }
                     }
                 });
@@ -135,14 +138,14 @@
                         if (newAmount > 0) {
                             y1 = calculateY(list, i, categories, element);
                             y3 = calculateY(list, i + 2, categories, element);
-                            chart.appendChild(bezier(x1, y1, x3, y3, "#aae2ba", newAmount / scalingFactor));
+                            chart.appendChild(bezier(x1, y1, x3, y3, baseColor, newAmount / scalingFactor));
                         }
 
                         newValueFrom = calculateCategoryTotal(list, i + 2, entryFrom);
                         y1 = calculateY(list, i, categories, entryFrom);
                         oldValueTo = calculateCategoryTotal(list, i, entryTo);
                         y3 = calculateY(list, i + 1, categories, entryTo);
-                        chart.appendChild(bezier(x1, y1 + newValueFrom / scalingFactor, x3, y3 + oldValueTo / scalingFactor, "#aae2ba", Math.abs(amount) / scalingFactor, "#ff9500", "#aae2ba"));
+                        chart.appendChild(bezier(x1, y1 + newValueFrom / scalingFactor, x3, y3 + oldValueTo / scalingFactor, baseColor, Math.abs(amount) / scalingFactor, "#ff9500", baseColor));
 
                         return;
                     }
