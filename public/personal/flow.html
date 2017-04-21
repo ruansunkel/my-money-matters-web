@@ -52,12 +52,53 @@
             baseColor = "#5ae2ba";
 
             // Set up indices
-            x1 = 20;
+            x1 = 0;
             x2 = x1 + 100;
             x3 = x2 + 100;
             if (!end) {
                 end = list.length;
             }
+
+            // Render Starting Totals
+            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            text = drawText(x1, 30, list[start].date);
+            chart.appendChild(text);
+            bbox = text.getBBox();
+            text.setAttribute("x", x1 + 100 - bbox.width / 2);
+            text.setAttribute("y", 30);
+
+            startTotal = 0;
+
+            categories = getCategoriesUpToIndex(list, start).sort();
+            categories.forEach(function(category) {
+                y = calculateY(list, start, categories, category);
+                total = calculateCategoryTotal(list, start, category);
+
+                if (total <= 0) {
+                    return;
+                }
+
+                startTotal += total;
+
+                text = drawText(x1, y, category + ": " + formatForDisplay(total));
+                chart.appendChild(text);
+                bbox = text.getBBox();
+                text.setAttribute("x", x3 - bbox.width - 15);
+                text.setAttribute("y", y + total / scalingFactor / 2 + (bbox.height / 4));
+                chart.appendChild(text);
+            });
+
+            // Render Start Total
+            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            text = drawText(x1, 30, formatForDisplay(startTotal));
+            chart.appendChild(text);
+            bbox = text.getBBox();
+            text.setAttribute("x", x2 - bbox.width / 2);
+            text.setAttribute("y", 67);
+
+            x1 += 200;
+            x2 += 200;
+            x3 += 200;
 
             // Loop through entries
             for (i = start; i < end; i++) {
@@ -235,6 +276,8 @@
             text.setAttribute("x", x1 + 100 - bbox.width / 2);
             text.setAttribute("y", 30);
 
+            endTotal = 0;
+
             categories = getCategoriesUpToIndex(list, end).sort();
             categories.forEach(function(category) {
                 y = calculateY(list, end, categories, category);
@@ -244,6 +287,8 @@
                     return;
                 }
 
+                endTotal += total;
+
                 text = drawText(x1, y, category + ": " + formatForDisplay(total));
                 chart.appendChild(text);
                 bbox = text.getBBox();
@@ -251,6 +296,14 @@
                 text.setAttribute("y", y + total / scalingFactor / 2 + (bbox.height / 4));
                 chart.appendChild(text);
             });
+
+            // Render Start Total
+            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            text = drawText(x1, 30, formatForDisplay(endTotal));
+            chart.appendChild(text);
+            bbox = text.getBBox();
+            text.setAttribute("x", x2 - bbox.width / 2);
+            text.setAttribute("y", 67);
         }
 
         function calculateY(list, index, categories, category) {
