@@ -82,6 +82,8 @@
 
                 startTotal += total;
 
+                chart.appendChild(createBezierCurve(x3 - 15, y, x3, y, ["white", baseColor], total / scalingFactor));
+
                 text = drawText(x1, y, category + ": " + formatForDisplay(total));
                 chart.appendChild(text);
                 bbox = text.getBBox();
@@ -291,11 +293,13 @@
 
                 endTotal += total;
 
+                chart.appendChild(createBezierCurve(x1, y, x1 + 15, y, [baseColor, "white"], total / scalingFactor));
+
                 text = drawText(x1, y, category + ": " + formatForDisplay(total));
                 chart.appendChild(text);
                 bbox = text.getBBox();
                 text.setAttribute("x", x1 + 15);
-                text.setAttribute("y", y + total / scalingFactor / 2 + (bbox.height / 4));
+                text.setAttribute("y", y + total / scalingFactor / 2 + (bbox.height / 4) + 0.5);
                 chart.appendChild(text);
             });
 
