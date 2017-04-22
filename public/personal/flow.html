@@ -35,6 +35,8 @@
         scalingFactor = 1;
         height = 500;
 
+        var defs = null;
+
         function renderVisualLog(root, list, start, end) {
             // Create Graph
             chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -60,7 +62,7 @@
             }
 
             // Render Starting Totals
-            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            chart.appendChild(createBezierCurve(x1 - 1, 50, x1 + 1, 50, ["#aae2ba"], 30));
             text = drawText(x1, 30, list[start].date);
             chart.appendChild(text);
             bbox = text.getBBox();
@@ -89,7 +91,7 @@
             });
 
             // Render Start Total
-            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            chart.appendChild(createBezierCurve(x1 - 1, 50, x1 + 1, 50, ["#aae2ba"], 30));
             text = drawText(x1, 30, formatForDisplay(startTotal));
             chart.appendChild(text);
             bbox = text.getBBox();
@@ -105,7 +107,7 @@
                 entry = list[i];
 
                 // Draw indicator lines
-                chart.appendChild(bezier(x1 - 0.5, 50, x1 + 1, 50, baseColor, 30));
+                chart.appendChild(createBezierCurve(x1 - 0.5, 50, x1 + 1, 50, [baseColor], 30));
                 text = drawText(x1, 30, entry.date);
                 chart.appendChild(text);
                 bbox = text.getBBox();
@@ -132,12 +134,12 @@
                     if (entry.type === "Transaction" && element === entry.category && amount > 0) {
                         y1 = calculateY(list, i, categories, element);
                         y3 = calculateY(list, i + 1, categories, element);
-                        chart.appendChild(bezier(x1 + 150, y3, x3, y3, "#5ac8fa", amount / scalingFactor, baseColor));
+                        chart.appendChild(createBezierCurve(x1 + 150, y3, x3, y3, ["#5ac8fa", baseColor], amount / scalingFactor));
 
                         oldAmount = calculateCategoryTotal(list, i, element);
                         if (oldAmount > 0) {
-                            chart.appendChild(bezier(x1, y1, x2 + 30, y1 + amount / scalingFactor + 2, baseColor, oldAmount / scalingFactor));
-                            chart.appendChild(bezier(x2 + 30, y1 + amount / scalingFactor + 2, x3, y3 + amount / scalingFactor, baseColor, oldAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x1, y1, x2 + 30, y1 + amount / scalingFactor + 2, [baseColor], oldAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x2 + 30, y1 + amount / scalingFactor + 2, x3, y3 + amount / scalingFactor, [baseColor], oldAmount / scalingFactor));
                         }
 
                         return;
@@ -147,12 +149,12 @@
                     if (entry.type === "Transaction" && element === entry.category && amount < 0) {
                         y1 = calculateY(list, i, categories, element);
                         y3 = calculateY(list, i + 1, categories, element);
-                        chart.appendChild(bezier(x1, y1, x3 - 150, y3, baseColor, Math.abs(amount) / scalingFactor, "red"));
+                        chart.appendChild(createBezierCurve(x1, y1, x3 - 150, y3, [baseColor, "red"], Math.abs(amount) / scalingFactor));
 
                         newAmount = calculateCategoryTotal(list, i + 1, element);
                         if (newAmount > 0) {
-                            chart.appendChild(bezier(x1, y1 + Math.abs(amount) / scalingFactor, x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, baseColor, newAmount / scalingFactor));
-                            chart.appendChild(bezier(x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, x3, y3, baseColor, newAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x1, y1 + Math.abs(amount) / scalingFactor, x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, [baseColor], newAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x2 - 60, y1 + Math.abs(amount) / scalingFactor + 2, x3, y3, [baseColor], newAmount / scalingFactor));
                         }
 
                         return;
@@ -166,7 +168,7 @@
                         if (oldAmount > 0) {
                             y1 = calculateY(list, i, categories, element);
                             y3 = calculateY(list, i + 1, categories, element);
-                            chart.appendChild(bezier(x1, y1, x3, y3, baseColor, oldAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x1, y1, x3, y3, [baseColor], oldAmount / scalingFactor));
                         }
                     }
 
@@ -175,7 +177,7 @@
                         if (oldAmount > 0) {
                             y1 = calculateY(list, i, categories, element);
                             y3 = calculateY(list, i + 2, categories, element);
-                            chart.appendChild(bezier(x1, y1, x3, y3, baseColor, oldAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x1, y1, x3, y3, [baseColor], oldAmount / scalingFactor));
                         }
                     }
                 });
@@ -190,14 +192,14 @@
                         if (newAmount > 0) {
                             y1 = calculateY(list, i, categories, element);
                             y3 = calculateY(list, i + 2, categories, element);
-                            chart.appendChild(bezier(x1, y1, x3, y3, baseColor, newAmount / scalingFactor));
+                            chart.appendChild(createBezierCurve(x1, y1, x3, y3, [baseColor], newAmount / scalingFactor));
                         }
 
                         newValueFrom = calculateCategoryTotal(list, i + 2, entryFrom);
                         y1 = calculateY(list, i, categories, entryFrom);
                         oldValueTo = calculateCategoryTotal(list, i, entryTo);
                         y3 = calculateY(list, i + 1, categories, entryTo);
-                        chart.appendChild(bezier(x1, y1 + newValueFrom / scalingFactor, x3, y3 + oldValueTo / scalingFactor, baseColor, Math.abs(amount) / scalingFactor, "#ff9500", baseColor));
+                        chart.appendChild(createBezierCurve(x1, y1 + newValueFrom / scalingFactor, x3, y3 + oldValueTo / scalingFactor, [baseColor, "#ff9500", baseColor], Math.abs(amount) / scalingFactor));
 
                         return;
                     }
@@ -269,7 +271,7 @@
             }
 
             // Render Totals
-            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            chart.appendChild(createBezierCurve(x1 - 1, 50, x1 + 1, 50, ["#aae2ba"], 30));
             text = drawText(x1, 30, new Date().toLocaleDateString("en-ZA"));
             chart.appendChild(text);
             bbox = text.getBBox();
@@ -298,7 +300,7 @@
             });
 
             // Render Start Total
-            chart.appendChild(bezier(x1 - 1, 50, x1 + 1, 50, "#aae2ba", 30));
+            chart.appendChild(createBezierCurve(x1 - 1, 50, x1 + 1, 50, ["#aae2ba"], 30));
             text = drawText(x1, 30, formatForDisplay(endTotal));
             chart.appendChild(text);
             bbox = text.getBBox();
@@ -340,76 +342,31 @@
 
         // HELPER FUNCTIONS
 
-        function bezier(x1, y1, x2, y2, color, weight, color2, color3) {
+        function createBezierCurve(x1, y1, x2, y2, colors, weight) {
             y2 += 0.01;
             path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", "M " + (x1) + " " + (y1 + weight / 2) + " C " + (x1 + (x2 - x1) / 2) + " " + (y1 + weight / 2) + " " + (x1 + (x2 - x1) / 2) + " " + (y2 + weight / 2) + " " + x2 + " " + (y2 + weight / 2));
             path.setAttribute("stroke-width", Math.max(weight, 0.3) + "px");
             path.setAttribute("fill", "none");
-            setColor(path, color, color2, color3);
+            setColor(path, colors);
             return path;
         }
 
-        function setColor(path, color, color2, color3) {
-            if (!color2) {
-                path.setAttribute("stroke", color);
+        function setColor(path, colors) {
+            if (colors.length === 1) {
+                path.setAttribute("stroke", colors[0]);
             } else {
-                if (color === color2) {
-                    path.setAttribute("stroke", color);
-                } else if (document.getElementById(color + color2 + color3)) {
-                    path.setAttribute("stroke", "url(#" + color + color2 + color3 + ")");
+                var id = colors.reduce(function(accumulator, entry) {
+                    return accumulator + entry;
+                });
+
+                if (document.getElementById(id)) {
+                    path.setAttribute("stroke", "url(#" + id + ")");
                 } else {
-                    createLinearGradient(defs, color + color2 + color3, color, color2, color3);
-                    path.setAttribute("stroke", "url(#" + color + color2 + color3 + ")");
+                    createLinearGradient(defs, id, colors);
+                    path.setAttribute("stroke", "url(#" + id + ")");
                 }
             }
-        }
-
-        function createLinearGradient(root, id, startColor, endColor, color3) {
-            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-            linearGradient.setAttribute("id", id);
-            root.appendChild(linearGradient);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            stop.setAttribute("offset", "0%");
-            stop.setAttribute("stop-color", startColor);
-            linearGradient.appendChild(stop);
-
-            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            if (color3) {
-                stop.setAttribute("offset", "50%");
-            } else {
-                stop.setAttribute("offset", "100%");
-            }
-            stop.setAttribute("stop-color", endColor);
-            linearGradient.appendChild(stop);
-
-            if (color3) {
-                stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-                stop.setAttribute("offset", "100%");
-                stop.setAttribute("stop-color", color3);
-                linearGradient.appendChild(stop);
-            }
-        }
-
-        function roundToTwoDecimalPlaces(number) {
-            return Math.round(number * 100) / 100;
-        }
-
-        function formatForDisplay(number) {
-            return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', {
-                style: 'currency',
-                currency: 'ZAR'
-            });
-        }
-
-        function drawText(x, y, value) {
-            text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.setAttribute("x", x);
-            text.setAttribute("y", y);
-            text.setAttribute("font-size", "12px");
-            text.innerHTML = value;
-            return text;
         }
 
         function calculatePreviousIndex(list, count) {
@@ -429,6 +386,66 @@
 
             return 0;
         }
+
+        // ###### NEW FUNCTIONS ######
+        function createLinearGradient(root, id, colors) {
+            if (colors.length < 2) {
+                return;
+            }
+
+            // Create Linear Gradient Container
+            linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+            linearGradient.setAttribute("id", id);
+            root.appendChild(linearGradient);
+
+            // Start Color
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "0%");
+            stop.setAttribute("stop-color", colors[0]);
+            linearGradient.appendChild(stop);
+
+            // Middle Colors
+            if (colors.length > 2) {
+                fraction = (1 / (colors.length - 1)) * 100;
+                for (var i = 1; i < colors.length - 1; i++) {
+                    stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                    stop.setAttribute("offset", (i * fraction) + "%");
+                    stop.setAttribute("stop-color", colors[i]);
+                    linearGradient.appendChild(stop);
+                }
+            }
+
+            // Last Color
+            stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stop.setAttribute("offset", "100%");
+            stop.setAttribute("stop-color", colors[colors.length - 1]);
+            linearGradient.appendChild(stop);
+        }
+        // ###### NEW FUNCTIONS ######
+
+
+        // ###### EXISTING FUNCTIONS ######
+        function roundToTwoDecimalPlaces(number) {
+            return Math.round(number * 100) / 100;
+        }
+
+        function formatForDisplay(number) {
+            return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', {
+                style: 'currency',
+                currency: 'ZAR'
+            });
+        }
+
+        function drawText(x, y, value) {
+            text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+            text.setAttribute("font-size", "12px");
+            text.innerHTML = value;
+            return text;
+        }
+        // ###### EXISTING FUNCTIONS ######
+
 
         firebase.auth().signInWithEmailAndPassword("budget@ruan.sunkel", "P@55w0rd@budget").then(function() {
             user = "budget_at_ruan_dot_sunkel";
