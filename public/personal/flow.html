@@ -199,7 +199,7 @@
                         y1 = calculateY(list, i, categories, entryFrom);
                         oldValueTo = calculateCategoryTotal(list, i, entryTo);
                         y3 = calculateY(list, i + 1, categories, entryTo);
-                        chart.appendChild(createBezierCurve(x1, y1 + newValueFrom / scalingFactor, x3, y3 + oldValueTo / scalingFactor, [baseColor, "#ff9500", baseColor], Math.abs(amount) / scalingFactor));
+                        chart.appendChild(createBezierCurve(x1, y1 + newValueFrom / scalingFactor, x3, y3 + oldValueTo / scalingFactor, [baseColor, "#ff9500", "#5ac8fa", baseColor], Math.abs(amount) / scalingFactor));
 
                         return;
                     }
