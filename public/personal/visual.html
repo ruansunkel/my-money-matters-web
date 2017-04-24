@@ -88,9 +88,9 @@
             ]);
 
             // April
-            nodeList[0][0][0][0] += 1937.23;
-            nodeList[2][0][0][0] += 1937.23;
-            nodeList[1][0][0][0] += 1937.23;
+            nodeList[0][0][0][0] += 2537.23;
+            nodeList[2][0][0][0] += 2537.23;
+            nodeList[1][0][0][0] += 2537.23;
             drawChart(createPanel(root, "April 2017", "info"), nodeList, [
                 [10000, "#5ae2ba", "House Fund"],
             ]);
@@ -136,8 +136,8 @@
             ]);
 
             // January
-            nodeList[1][0][0][0] -= 7172.23;
-            nodeList[1][0][2][0] += 7172.23;
+            nodeList[1][0][0][0] -= 7772.23;
+            nodeList[1][0][2][0] += 7772.23;
             nodeList[2][0].splice(0, 1);
 
             drawChart(createPanel(root, "January 2018", "info"), nodes, [
@@ -317,9 +317,7 @@
 
             // Drawing Functions
             function createCurve(x0, y0, x1, y1, height, color) {
-                if (y0 == y1) {
-                    y1 += 0.001;
-                }
+                y1 += 0.001;
 
                 path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("d", "M " + x0 + " " + y0 + " C " + (x0 + (x1 - x0) / 2) + " " + y0 + " " + (x0 + (x1 - x0) / 2) + " " + y1 + " " + x1 + " " + y1);
