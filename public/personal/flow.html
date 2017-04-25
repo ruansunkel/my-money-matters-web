@@ -455,9 +455,14 @@
             user = "budget_at_ruan_dot_sunkel";
             firebase.database().ref(user).once("value").then(function(snapshot) {
                 scalingFactor = 150;
-                height = 200;
+
                 var list = JSON.parse(snapshot.child("list").val()).reverse();
                 var previousIndex = calculatePreviousIndex(list, 5);
+
+                categories = getCategoriesUpToIndex(list, list.length).sort();
+                y = calculateY(list, list.length, categories, categories[categories.length - 1]);
+                total = calculateCategoryTotal(list, list.length, categories[categories.length - 1]);
+                height = y + total / scalingFactor + 40;
 
                 var header = document.createElement("h3");
                 header.innerHTML = "Personal Account";
@@ -469,7 +474,7 @@
                     user = "budget_at_savings_dot_sunkel";
                     firebase.database().ref(user).once("value").then(function(snapshot) {
                         scalingFactor = 150;
-                        height = 500;
+                        height = 800;
                         var list = JSON.parse(snapshot.child("list").val()).reverse();
                         var previousIndex = calculatePreviousIndex(list, 5);
 
