@@ -459,10 +459,20 @@
                 var list = JSON.parse(snapshot.child("list").val()).reverse();
                 var previousIndex = calculatePreviousIndex(list, 5);
 
-                categories = getCategoriesUpToIndex(list, list.length).sort();
-                y = calculateY(list, list.length, categories, categories[categories.length - 1]);
-                total = calculateCategoryTotal(list, list.length, categories[categories.length - 1]);
-                height = y + total / scalingFactor + 40;
+                totalHeight = 0;
+
+                height = 0;
+
+                for (var i = previousIndex; i < list.length; i++) {
+                    categories = getCategoriesUpToIndex(list, i).sort();
+                    y = calculateY(list, i, categories, categories[i]);
+                    total = calculateCategoryTotal(list, i, categories[i]);
+                    totalHeight = y + total / scalingFactor + 40;
+
+                    if (totalHeight > height) {
+                        height = totalHeight;
+                    }
+                }
 
                 var header = document.createElement("h3");
                 header.innerHTML = "Personal Account";
