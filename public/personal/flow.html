@@ -452,51 +452,132 @@
 
 
         firebase.auth().signInWithEmailAndPassword("budget@ruan.sunkel", "P@55w0rd@budget").then(function() {
-            user = "budget_at_ruan_dot_sunkel";
-            firebase.database().ref(user).once("value").then(function(snapshot) {
-                scalingFactor = 150;
+                user = "budget_at_ruan_dot_sunkel";
 
-                var list = JSON.parse(snapshot.child("list").val()).reverse();
-                var previousIndex = calculatePreviousIndex(list, 5);
+                var personalList = [];
+                var savingsList = [];
 
-                totalHeight = 0;
+                firebase.database().ref(user).once("value").then(function(snapshot) {
+                    scalingFactor = 150;
 
-                height = 0;
+                    var list = JSON.parse(snapshot.child("list").val()).reverse();
+                    personalList = list;
+                    var previousIndex = calculatePreviousIndex(list, 5);
 
-                for (var i = previousIndex; i < list.length; i++) {
-                    categories = getCategoriesUpToIndex(list, i).sort();
-                    y = calculateY(list, i, categories, categories[i]);
-                    total = calculateCategoryTotal(list, i, categories[i]);
-                    totalHeight = y + total / scalingFactor + 40;
+                    // Calculate Graph Height
+                    totalHeight = 0;
+                    height = 0;
+                    for (var i = previousIndex; i < list.length; i++) {
+                        categories = getCategoriesUpToIndex(list, i).sort();
+                        y = calculateY(list, i, categories, categories[i]);
+                        total = calculateCategoryTotal(list, i, categories[i]);
+                        totalHeight = y + total / scalingFactor + 40;
 
-                    if (totalHeight > height) {
-                        height = totalHeight;
+                        if (totalHeight > height) {
+                            height = totalHeight;
+                        }
                     }
-                }
 
-                var header = document.createElement("h3");
-                header.innerHTML = "Personal Account";
-                document.getElementById("root").appendChild(header);
+                    var header = document.createElement("h3");
+                    header.innerHTML = "Personal Account - Last 5 Transactions";
+                    document.getElementById("root").appendChild(header);
 
-                renderVisualLog(document.getElementById("root"), list, previousIndex);
+                    renderVisualLog(document.getElementById("root"), list, previousIndex);
 
-                firebase.auth().signInWithEmailAndPassword("budget@savings.sunkel", "P@55w0rd@budget").then(function() {
-                    user = "budget_at_savings_dot_sunkel";
-                    firebase.database().ref(user).once("value").then(function(snapshot) {
-                        scalingFactor = 150;
-                        height = 800;
-                        var list = JSON.parse(snapshot.child("list").val()).reverse();
-                        var previousIndex = calculatePreviousIndex(list, 5);
+                    firebase.auth().signInWithEmailAndPassword("budget@savings.sunkel", "P@55w0rd@budget").then(function() {
+                            user = "budget_at_savings_dot_sunkel";
+                            firebase.database().ref(user).once("value").then(function(snapshot) {
+                                scalingFactor = 150;
+                                var list = JSON.parse(snapshot.child("list").val()).reverse();
+                                savingsList = list;
+                                var previousIndex = calculatePreviousIndex(list, 5);
 
-                        var header = document.createElement("h3");
-                        header.innerHTML = "Savings Account";
-                        document.getElementById("root").appendChild(header);
+                                // Calculate Graph Height
+                                totalHeight = 0;
+                                height = 0;
+                                for (var i = previousIndex; i < list.length; i++) {
+                                    categories = getCategoriesUpToIndex(list, i).sort();
+                                    y = calculateY(list, i, categories, categories[i]);
+                                    total = calculateCategoryTotal(list, i, categories[i]);
+                                    totalHeight = y + total / scalingFactor + 40;
 
-                        renderVisualLog(document.getElementById("root"), list, previousIndex);
-                    });
-                }, function(error) {});
-            });
-        }, function(error) {});
+                                    if (totalHeight > height) {
+                                        height = totalHeight;
+                                    }
+                                }
+
+                                var header = document.createElement("h3");
+                                header.innerHTML = "Savings Account - Last 5 Transactions";
+                                document.getElementById("root").appendChild(header);
+
+                                renderVisualLog(document.getElementById("root"), list, previousIndex);
+
+
+                                // Render Month Graph
+                                var month = new Date().getMonth() + 1;
+                                var date = new Date().getFullYear() + "-" + (month < 10 ? ("0" + month) : month);
+
+                                // Personal Month
+                                var i = 0;
+                                for (i = 0; i < personalList.length; i++) {
+                                    if (personalList[i].date.indexOf(date) !== -1) {
+                                        break;
+                                    }
+                                }
+
+                                previousIndex = i;
+                                totalHeight = 0;
+                                height = 0;
+                                list = personalList;
+                                for (var i = previousIndex; i < list.length; i++) {
+                                    categories = getCategoriesUpToIndex(list, i).sort();
+                                    y = calculateY(list, i, categories, categories[i]);
+                                    total = calculateCategoryTotal(list, i, categories[i]);
+                                    totalHeight = y + total / scalingFactor + 40;
+
+                                    if (totalHeight > height) {
+                                        height = totalHeight;
+                                    }
+                                }
+
+                                var header = document.createElement("h3");
+                                header.innerHTML = "Personal Account - Month Transactions";
+                                document.getElementById("root").appendChild(header);
+                                renderVisualLog(document.getElementById("root"), list, previousIndex);
+
+                                // Savings Month
+                                var i = 0;
+                                for (i = 0; i < savingsList.length; i++) {
+                                    if (savingsList[i].date.indexOf(date) !== -1) {
+                                        break;
+                                    }
+                                }
+
+                                previousIndex = i;
+                                totalHeight = 0;
+                                height = 0;
+                                list = savingsList;
+                                for (var i = previousIndex; i < list.length; i++) {
+                                    categories = getCategoriesUpToIndex(list, i).sort();
+                                    y = calculateY(list, i, categories, categories[i]);
+                                    total = calculateCategoryTotal(list, i, categories[i]);
+                                    totalHeight = y + total / scalingFactor + 40;
+
+                                    if (totalHeight > height) {
+                                        height = totalHeight;
+                                    }
+                                }
+
+                                var header = document.createElement("h3");
+                                header.innerHTML = "Savings Account - Month Transactions";
+                                document.getElementById("root").appendChild(header);
+                                renderVisualLog(document.getElementById("root"), list, previousIndex);
+                            });
+                        },
+                        function(error) {});
+                });
+            },
+            function(error) {});
     </script>
 </body>
 
