@@ -1,0 +1,447 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="margin: 0; padding: 0;">
+
+    <div class="container-fluid">
+        <div class="page-header">
+            <h1><img src="https://www.mymoneymatters.co.za/images/cent/logo_250x250.png" style="width: 100px" />Visual Money Allocation</h1>
+        </div>
+
+        <div id="graphs"></div>
+
+        <script type="text/javascript">
+            function createBezierCurve(x1, y1, x2, y2, colors, weight) {
+                y2 += 0.01;
+                path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", "M " + (x1) + " " + (y1 + weight / 2) + " C " + (x1 + (x2 - x1) / 2) + " " + (y1 + weight / 2) + " " + (x1 + (x2 - x1) / 2) + " " + (y2 + weight / 2) + " " + x2 + " " + (y2 + weight / 2));
+                path.setAttribute("stroke-width", weight > 0 ? Math.max(weight, 0.3) : 0 + "px");
+                path.setAttribute("fill", "none");
+                setColor(path, colors);
+                return path;
+            }
+
+            function setColor(path, colors) {
+                if (colors.length === 1) {
+                    path.setAttribute("stroke", colors[0]);
+                } else {
+                    var id = colors.reduce(function(accumulator, entry) {
+                        return accumulator + entry;
+                    });
+
+                    if (document.getElementById(id)) {
+                        path.setAttribute("stroke", "url(#" + id + ")");
+                    } else {
+                        createLinearGradient(defs, id, colors);
+                        path.setAttribute("stroke", "url(#" + id + ")");
+                    }
+                }
+            }
+
+            function createLinearGradient(root, id, colors) {
+                if (colors.length < 2) {
+                    return;
+                }
+
+                // Create Linear Gradient Container
+                linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+                linearGradient.setAttribute("id", id);
+                root.appendChild(linearGradient);
+
+                // Start Color
+                stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                stop.setAttribute("offset", "0%");
+                stop.setAttribute("stop-color", colors[0]);
+                linearGradient.appendChild(stop);
+
+                // Middle Colors
+                if (colors.length > 2) {
+                    fraction = (1 / (colors.length - 1)) * 100;
+                    for (var i = 1; i < colors.length - 1; i++) {
+                        stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                        stop.setAttribute("offset", (i * fraction) + "%");
+                        stop.setAttribute("stop-color", colors[i]);
+                        linearGradient.appendChild(stop);
+                    }
+                }
+
+                // Last Color
+                stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                stop.setAttribute("offset", "100%");
+                stop.setAttribute("stop-color", colors[colors.length - 1]);
+                linearGradient.appendChild(stop);
+            }
+
+            function roundToTwoDecimalPlaces(number) {
+                return Math.round(number * 100) / 100;
+            }
+
+            function formatForDisplay(number) {
+                return roundToTwoDecimalPlaces(number).toLocaleString('en-ZA', {
+                    style: 'currency',
+                    currency: 'ZAR'
+                });
+            }
+
+            function drawText(x, y, value) {
+                text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", x);
+                text.setAttribute("y", y);
+                text.setAttribute("font-size", "12px");
+                text.innerHTML = value;
+                return text;
+            }
+
+            function calculateMaxNodeSum(nodes) {
+                total = 0;
+                nodes[0].forEach(function(child) {
+                    total += child.reduce(function(accumulator, grandChild) {
+                        return accumulator + grandChild[0];
+                    }, 0);
+                });
+
+                return total;
+            }
+
+            function calculateMaxChildNode(nodes) {
+                total = 0;
+                nodes.forEach(function(node) {
+                    nodeCount = node.reduce(function(accumulator, child) {
+                        return accumulator + child.length;
+                    }, 0);
+
+                    total = nodeCount > total ? nodeCount : total;
+                });
+
+                return total;
+            }
+
+            function processNodes(nodes) {
+                nodes[1][0].forEach(function(node, index) {
+                    node[0] = nodes[2][index] ? nodes[2][index].reduce(function(accumulator, entry) {
+                        return accumulator + entry[0];
+                    }, 0) : 0;
+                });
+            }
+        </script>
+
+        <script type="text/javascript">
+            function drawChart(chart, nodes) {
+                processNodes(nodes);
+
+                graphWidth = chart.clientWidth - 160;
+                graphHeight = chart.clientHeight;
+                nodePadding = 18;
+
+                maxChildNode = calculateMaxChildNode(nodes)
+                maxNodeSum = calculateMaxNodeSum(nodes);
+                scalingFactor = (graphHeight - (maxChildNode + 1) * nodePadding) / maxNodeSum;
+
+                // Draw Values
+                nodes.forEach(function(node, index) {
+                    x0 = index * graphWidth / nodes.length + (index == 0 ? nodePadding : 0);
+                    x1 = index + 1 < nodes.length ? (index + 1) * graphWidth / nodes.length : graphWidth - nodePadding;
+
+                    y0 = (graphHeight - (maxNodeSum * scalingFactor + (node.length - 1) * nodePadding)) / 2;
+                    y1 = index + 1 < nodes.length ? (graphHeight - (maxNodeSum * scalingFactor + (nodes[index + 1].length - 1) * nodePadding)) / 2 : nodePadding;
+
+                    node.forEach(function(child, childIndex) {
+                        child.forEach(function(grandChild, grandChildIndex) {
+                            value = grandChild[0] * scalingFactor;
+
+                            chart.appendChild(createBezierCurve(x0 - 0.5, y0, x1, y1, grandChild[1], value));
+
+                            if (index + 1 >= nodes.length) {
+                                chart.appendChild(drawText(x1 + 10, y1 + value / 2 + 4.0, grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")"));
+                            } else if (index == 0) {
+                                chart.appendChild(drawText(x0 + 10, y0 + value / 2 + 5.5, grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")"));
+                            } else {
+                                chart.appendChild(drawText(x0 + 20, y0 + value / 2 + 5.5, grandChild[2] + " (" + formatForDisplay(grandChild[0]) + ")"));
+                            }
+
+                            if ((index + 1 < nodes.length && childIndex < nodes[index + 1].length && nodes[index + 1].length > 1) || (index + 1 >= nodes.length)) {
+                                y1 += nodePadding;
+                            }
+
+                            y0 += node[childIndex][grandChildIndex][0] * scalingFactor;
+                            y1 += node[childIndex][grandChildIndex][0] * scalingFactor;
+                        });
+
+                        y0 += nodePadding;
+                    });
+                });
+            }
+
+            function show(nodes) {
+                var total = nodes[0].reduce(function(accumulator, entry, index) {
+                    return accumulator + entry.reduce(function(accumulator, entry) {
+                        return accumulator + entry[0];
+                    }, 0);
+                }, 0);
+
+                var expences = nodes[2].reduce(function(accumulator, entry, index) {
+                    return accumulator + entry.reduce(function(accumulator, entry) {
+                        return accumulator + entry[0];
+                    }, 0);
+                }, 0);
+
+                console.log("Total Left: " + formatForDisplay(total - expences));
+            }
+        </script>
+
+        <script type="text/javascript">
+            nodes = [
+                [
+                    [
+                        [34600, ["#5ae2ba"], "Pfortner"]
+                    ],
+                    [
+                        [11655, ["#5ae2ba"], "Young Engineers"]
+                    ],
+                    [
+                        [6000, ["#5ac8fa", "#5ae2ba"], "SARS"]
+                    ]
+                ],
+                [
+                    [
+                        [0, ["#5ae2ba", "#ff9500"], "Fixed Expences"],
+                        [0, ["#5ae2ba", "#47e54a"], "Living Expences"],
+                        [0, ["#5ae2ba", "#47e54a"], "Unforseen"],
+                        [0, ["#5ae2ba", "#5ac8fa"], "Goals"],
+                    ]
+                ],
+                [
+                    [
+                        [4078.50, ["#ff9500", "#ff3b30"], "DEBT"],
+                        [607.50, ["#ff9500", "#ff3b30"], "DEBT"],
+
+                        [8500, ["#ff9500"], "Rent"],
+                        [3129, ["#ff9500"], "Medical Aid"],
+                        [2410.92, ["#ff9500"], "Sanlam Policies"],
+                        [1500, ["#ff9500"], "Domestic Work"],
+                        [751.36, ["#ff9500"], "Car Insurance"],
+                        [253.41, ["#ff9500"], "Car Service Plan"],
+                        [250, ["#ff9500"], "Municipal Rates"],
+                        [200, ["#ff9500"], "Bank Fees"]
+                    ],
+                    [
+                        [6188.18, ["#47e54a"], "Groceries"],
+                        [2500, ["#47e54a"], "Fun"],
+                        [2000, ["#47e54a"], "Petrol"],
+                        [800, ["#47e54a"], "Electricity"],
+                        [1200, ["#47e54a"], "Lucy Food"],
+                    ],
+                    [
+                        [1800, ["#47e54a", "#ff9500"], "Surgery Costs"],
+                        [2000, ["#47e54a", "#ff9500"], "Car Brakes"],
+                    ],
+                    [
+                        [10000, ["#5ac8fa"], "Small Buffer"],
+                        [4086.23, ["#5ac8fa"], "Ruan's Birthday"]
+                    ]
+                ]
+            ];
+
+            var header = document.createElement("h3");
+            header.innerHTML = "July 2017";
+            document.getElementById("graphs").appendChild(header);
+
+            // Create Graph
+            chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            chart.style.width = "100%";
+            chart.style.height = 550;
+            chart.setAttribute("width", chart.style.width);
+            chart.setAttribute("height", chart.style.height);
+            document.getElementById("graphs").appendChild(chart);
+
+            // Definitions
+            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            chart.appendChild(defs);
+
+            drawChart(chart, nodes);
+
+            nodes = [
+                [
+                    [
+                        [34600, ["#5ae2ba"], "Pfortner"]
+                    ],
+                    [
+                        [11655, ["#5ae2ba"], "Young Engineers"]
+                    ]
+                ],
+                [
+                    [
+                        [0, ["#5ae2ba", "#ff9500"], "Fixed Expences"],
+                        [0, ["#5ae2ba", "#47e54a"], "Living Expences"],
+                        [0, ["#5ae2ba", "#5ac8fa"], "Goals"],
+                    ]
+                ],
+                [
+                    [
+                        [4078.50, ["#ff9500", "#ff3b30"], "DEBT"],
+                        [607.50, ["#ff9500", "#ff3b30"], "DEBT"],
+
+                        [8500, ["#ff9500"], "Rent"],
+                        [3129, ["#ff9500"], "Medical Aid"],
+                        [2410.92, ["#ff9500"], "Sanlam Policies"],
+                        [1500, ["#ff9500"], "Domestic Work"],
+                        [751.36, ["#ff9500"], "Car Insurance"],
+                        [253.41, ["#ff9500"], "Car Service Plan"],
+                        [250, ["#ff9500"], "Municipal Rates"],
+                        [200, ["#ff9500"], "Bank Fees"]
+                    ],
+                    [
+                        [6188.18, ["#47e54a"], "Groceries"],
+                        [2500, ["#47e54a"], "Fun"],
+                        [2000, ["#47e54a"], "Petrol"],
+                        [800, ["#47e54a"], "Electricity"],
+                        [1200, ["#47e54a"], "Lucy Food"],
+                    ],
+                    [
+                        [10000, ["#5ac8fa", "#5ac8fa"], "Unallocated"],
+                        [1886.13, ["#5ac8fa", "#FFD700"], "Give Away"],
+                    ]
+                ]
+            ];
+
+            var header = document.createElement("h3");
+            header.innerHTML = "August 2017";
+            document.getElementById("graphs").appendChild(header);
+
+            // Create Graph
+            chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            chart.style.width = "100%";
+            chart.style.height = 550;
+            chart.setAttribute("width", chart.style.width);
+            chart.setAttribute("height", chart.style.height);
+            document.getElementById("graphs").appendChild(chart);
+
+            // Definitions
+            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            chart.appendChild(defs);
+
+            drawChart(chart, nodes);
+
+            nodes = [
+                [
+                    [
+                        [34600, ["#5ae2ba"], "Pfortner"],
+                    ]
+                ],
+                [
+                    [
+                        [0, ["#5ae2ba", "#ff9500"], "Fixed Expences"],
+                        [0, ["#5ae2ba", "#47e54a"], "Living Expences"],
+                        [0, ["#5ae2ba", "#5ac8fa"], "Goals"],
+                    ]
+                ],
+                [
+                    [
+                        [8500, ["#ff9500"], "Rent"],
+                        [3129, ["#ff9500"], "Medical Aid"],
+                        [2410.92, ["#ff9500"], "Sanlam Policies"],
+                        [1500, ["#ff9500"], "Domestic Work"],
+                        [751.36, ["#ff9500"], "Car Insurance"],
+                        [253.41, ["#ff9500"], "Car Service Plan"],
+                        [250, ["#ff9500"], "Municipal Rates"],
+                        [200, ["#ff9500"], "Bank Fees"],
+                    ],
+                    [
+                        [6188.18, ["#47e54a"], "Groceries"],
+                        [2500, ["#47e54a"], "Fun"],
+                        [2000, ["#47e54a"], "Petrol"],
+                        [800, ["#47e54a"], "Electricity"],
+                        [1200, ["#47e54a"], "Lucy Food"],
+                    ],
+                    [
+                        [4917.13, ["#5ac8fa", "#5ac8fa"], "Goals"],
+                    ]
+                ]
+            ];
+
+            var header = document.createElement("h3");
+            header.innerHTML = "Budget if Jessi goes on Leave and we have no debt";
+            document.getElementById("graphs").appendChild(header);
+
+            // Create Graph
+            chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            chart.style.width = "100%";
+            chart.style.height = 550;
+            chart.setAttribute("width", chart.style.width);
+            chart.setAttribute("height", chart.style.height);
+            document.getElementById("graphs").appendChild(chart);
+
+            // Definitions
+            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            chart.appendChild(defs);
+
+            drawChart(chart, nodes);
+            show(nodes);
+
+            nodes = [
+                [
+                    [
+                        [34600, ["#5ae2ba"], "Pfortner"],
+                    ],
+                    [
+                        [11655, ["#5ae2ba"], "Young Engineers"],
+                    ]
+                ],
+                [
+                    [
+                        [0, ["#5ae2ba", "#ff9500"], "Fixed Expences"],
+                        [0, ["#5ae2ba", "#47e54a"], "Living Expences"],
+                        [0, ["#5ae2ba", "#5ac8fa"], "Goals"],
+                    ]
+                ],
+                [
+                    [
+                        [8500, ["#ff9500"], "Rent"],
+                        [3129, ["#ff9500"], "Medical Aid"],
+                        [2410.92, ["#ff9500"], "Sanlam Policies"],
+                        [1500, ["#ff9500"], "Domestic Work"],
+                        [751.36, ["#ff9500"], "Car Insurance"],
+                        [253.41, ["#ff9500"], "Car Service Plan"],
+                        [250, ["#ff9500"], "Municipal Rates"],
+                        [200, ["#ff9500"], "Bank Fees"],
+                    ],
+                    [
+                        [6188.18, ["#47e54a"], "Groceries"],
+                        [2500, ["#47e54a"], "Fun"],
+                        [2000, ["#47e54a"], "Petrol"],
+                        [800, ["#47e54a"], "Electricity"],
+                        [1200, ["#47e54a"], "Lucy Food"],
+                    ],
+                    [
+                        [16572.13, ["#5ac8fa", "#5ac8fa"], "Goals"],
+                    ]
+                ]
+            ];
+
+            var header = document.createElement("h3");
+            header.innerHTML = "Ideal Budget if we both work and we have no debt";
+            document.getElementById("graphs").appendChild(header);
+
+            // Create Graph
+            chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            chart.style.width = "100%";
+            chart.style.height = 550;
+            chart.setAttribute("width", chart.style.width);
+            chart.setAttribute("height", chart.style.height);
+            document.getElementById("graphs").appendChild(chart);
+
+            // Definitions
+            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            chart.appendChild(defs);
+
+            drawChart(chart, nodes);
+            show(nodes);
+        </script>
+    </div>
+</body>
+
+</html>
